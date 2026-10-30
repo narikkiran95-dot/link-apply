@@ -8,7 +8,8 @@ import {
   Zap, 
   Sparkles, 
   CheckCircle,
-  ExternalLink
+  Briefcase,
+  Layers
 } from "lucide-react";
 import { Job } from "@/types/job";
 
@@ -37,7 +38,7 @@ export const JobList: React.FC<JobListProps> = ({
           No matching jobs found
         </h3>
         <p className="text-xs text-slate-500 mt-1">
-          Try clearing filters or search terms like &quot;React&quot;, &quot;Full Stack&quot;, or &quot;Remote&quot;.
+          Try adjusting filters or toggle C2C / Mainframe options.
         </p>
       </div>
     );
@@ -48,6 +49,7 @@ export const JobList: React.FC<JobListProps> = ({
       {jobs.map((job) => {
         const isSelected = job.id === selectedJobId;
         const hasApplied = appliedJobIds.has(job.id);
+        const isC2C = job.contractType === "C2C" || job.c2cEligible;
 
         return (
           <div
@@ -82,32 +84,46 @@ export const JobList: React.FC<JobListProps> = ({
                   </span>
                 </div>
 
-                <p className="text-xs font-medium text-slate-700 dark:text-slate-300 mt-0.5">
-                  {job.company}
-                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                    {job.company}
+                  </p>
+                  {isC2C && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 flex items-center gap-0.5">
+                      <Briefcase className="w-2.5 h-2.5" /> C2C Offering
+                    </span>
+                  )}
+                  {job.domain === "Mainframe" && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                      Mainframe
+                    </span>
+                  )}
+                </div>
 
-                <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-500">
+                <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-slate-500">
                   <span className="flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-slate-400" />
-                    {job.location} ({job.workplaceType})
+                    {job.location}
                   </span>
                   <span>·</span>
-                  <span>{job.salary.split("·")[0]}</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    {job.hourlyRate || job.salary.split("·")[0]}
+                  </span>
                 </div>
 
                 {/* Skills tags */}
                 <div className="flex flex-wrap gap-1.5 mt-2.5">
-                  {job.skills.slice(0, 3).map((skill) => (
+                  {job.skills.slice(0, 4).map((skill) => (
                     <span
                       key={skill}
-                      className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                      className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium"
                     >
                       {skill}
                     </span>
                   ))}
-                  {job.skills.length > 3 && (
+                  {job.skills.length > 4 && (
                     <span className="text-[11px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-400">
-                      +{job.skills.length - 3}
+                      +{job.skills.length - 4}
                     </span>
                   )}
                 </div>
@@ -136,7 +152,7 @@ export const JobList: React.FC<JobListProps> = ({
                         e.stopPropagation();
                         onOpenApply(job);
                       }}
-                      className="text-xs font-semibold text-[#0a66c2] hover:text-[#004182] hover:underline flex items-center gap-1 py-1 px-2 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition"
+                      className="text-xs font-semibold text-[#0a66c2] hover:text-[#004182] hover:underline flex items-center gap-1 py-1 px-2 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer"
                     >
                       Easy Apply
                     </button>

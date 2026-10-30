@@ -1,20 +1,25 @@
 import { NextResponse } from "next/server";
 import { mockJobs, initialApplications, initialUserProfile } from "@/data/mockJobs";
-import { JobApplication, AutoApplyConfig } from "@/types/job";
+import { JobApplication, AutoApplyConfig, TailoredResume } from "@/types/job";
+import { generateTailoredResume } from "@/utils/resumeTailor";
 
 // In-memory application store (shared across session requests)
 let applications: JobApplication[] = [...initialApplications];
 let userProfile = { ...initialUserProfile };
 
 let autoApplyConfig: AutoApplyConfig = {
-  isActive: false,
-  targetTitles: ["Full Stack", "Frontend", "Backend", "Software Engineer"],
-  locations: ["San Francisco, CA", "Remote", "New York, NY"],
-  workplaceTypes: ["Remote", "Hybrid"],
-  minSalary: 150000,
-  maxApplicationsPerDay: 10,
+  isActive: true,
+  targetTitles: ["Mainframe Developer", "COBOL", "CICS", "DB2", "z/OS Consultant"],
+  locations: ["Remote", "Boston, MA", "Charlotte, NC"],
+  workplaceTypes: ["Remote"],
+  minSalary: 175000,
+  maxApplicationsPerDay: 5,
   matchThresholdPercent: 85,
-  customCoverNote: "Hi there! I am very excited about this role and how my 6+ years of full-stack engineering and cloud systems experience align with your team's mission."
+  customCoverNote: "Hi there! I am reaching out as an experienced Mainframe consultant with an active US LLC available immediately for Corp-to-Corp (C2C) engagement. With 8+ years deep in COBOL, JCL, DB2, and CICS, I can integrate smoothly into your team.",
+  c2cOnly: true,
+  autoTailorResume: true,
+  domainFilter: "Mainframe",
+  minHourlyRateC2C: 90
 };
 
 export async function GET(request: Request) {
@@ -24,13 +29,22 @@ export async function GET(request: Request) {
   const workplaceType = searchParams.get("workplaceType") || "";
   const experienceLevel = searchParams.get("experienceLevel") || "";
   const easyApplyOnly = searchParams.get("easyApply") === "true";
+  const c2cOnly = searchParams.get("c2cOnly") === "true";
+  const domain = searchParams.get("domain") || "all";
 
   let filtered = mockJobs.filter(job => {
+    if (c2cOnly && !(job.contractType === "C2C" || job.c2cEligible)) {
+      return false;
+    }
+    if (domain !== "all" && job.domain !== domain) {
+      return false;
+    }
     if (q) {
       const matchTitle = job.title.toLowerCase().includes(q);
       const matchCompany = job.company.toLowerCase().includes(q);
       const matchSkill = job.skills.some((s: string) => s.toLowerCase().includes(q));
-      if (!matchTitle && !matchCompany && !matchSkill) return false;
+      const matchDomain = (job.domain || "").toLowerCase().includes(q);
+      if (!matchTitle && !matchCompany && !matchSkill && !matchDomain) return false;
     }
     if (location) {
       if (!job.location.toLowerCase().includes(location)) return false;
@@ -62,7 +76,7 @@ export async function POST(request: Request) {
     const { action } = body;
 
     if (action === "apply") {
-      const { jobId, screeningAnswers, notes, customResume, method = "Easy Apply" } = body;
+      const { jobId, screeningAnswers, notes, customResume, method = "Easy Apply", tailoredResume } = body;
       const targetJob = mockJobs.find(j => j.id === jobId);
 
       if (!targetJob) {
@@ -75,6 +89,8 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Already applied to this job" }, { status: 400 });
       }
 
+      const effectiveTailoredResume = tailoredResume || generateTailoredResume(targetJob, userProfile);
+
       const newApp: JobApplication = {
         id: `app-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         jobId: targetJob.id,
@@ -83,11 +99,13 @@ export async function POST(request: Request) {
         companyLogo: targetJob.companyLogo,
         location: targetJob.location,
         salary: targetJob.salary,
+        contractType: targetJob.contractType,
         appliedAt: "Just now",
         status: "Applied",
         method: method,
-        resumeUsed: customResume || userProfile.resumeFileName,
-        notes: notes || "Submitted application via LinkedIn Easy Apply with full profile details.",
+        resumeUsed: effectiveTailoredResume.fileName || customResume || userProfile.resumeFileName,
+        tailoredResume: effectiveTailoredResume,
+        notes: notes || `Submitted customized C2C application for ${targetJob.company} with tailored resume.`,
         screeningAnswers: screeningAnswers || {}
       };
 
@@ -99,6 +117,14 @@ export async function POST(request: Request) {
         application: newApp,
         totalApplications: applications.length
       });
+    }
+
+    if (action === "preview-tailor") {
+      const { jobId } = body;
+      const targetJob = mockJobs.find(j => j.id === jobId);
+      if (!targetJob) return NextResponse.json({ error: "Job not found" }, { status: 404 });
+      const tailored = generateTailoredResume(targetJob, userProfile);
+      return NextResponse.json({ success: true, tailoredResume: tailored });
     }
 
     if (action === "update-profile") {
@@ -120,6 +146,8 @@ export async function POST(request: Request) {
         if (appliedJobIds.has(job.id)) return false;
         if (!job.easyApply) return false;
         if (job.matchScore < (autoApplyConfig.matchThresholdPercent || 80)) return false;
+        if (autoApplyConfig.c2cOnly && !(job.contractType === "C2C" || job.c2cEligible)) return false;
+        if (autoApplyConfig.domainFilter && autoApplyConfig.domainFilter !== "all" && job.domain !== autoApplyConfig.domainFilter) return false;
         return true;
       });
 
@@ -128,6 +156,8 @@ export async function POST(request: Request) {
 
       for (let i = 0; i < batchLimit; i++) {
         const targetJob = candidates[i];
+        const tailored = generateTailoredResume(targetJob, userProfile);
+
         const newApp: JobApplication = {
           id: `app-auto-${Date.now()}-${i}`,
           jobId: targetJob.id,
@@ -136,11 +166,13 @@ export async function POST(request: Request) {
           companyLogo: targetJob.companyLogo,
           location: targetJob.location,
           salary: targetJob.salary,
+          contractType: targetJob.contractType,
           appliedAt: "Just now (AI Agent)",
           status: "Applied",
           method: "Auto-Apply Agent",
-          resumeUsed: userProfile.resumeFileName,
-          notes: `Applied automatically via AI Auto-Apply Bot (Match Score: ${targetJob.matchScore}%). Verified contact, experience, and custom pitch note.`
+          resumeUsed: tailored.fileName,
+          tailoredResume: tailored,
+          notes: `Auto-Applied on C2C basis with custom tailored resume (${tailored.fileName}). Highlighted skills: ${tailored.primarySkills.slice(0, 4).join(", ")}. Corp LLC entity: ${userProfile.c2cEntityName || "Apex Consulting LLC"}.`
         };
         applications.unshift(newApp);
         appliedNow.push(newApp);

@@ -1,37 +1,267 @@
 import { Job, UserProfile, JobApplication } from "@/types/job";
+import { generateTailoredResume } from "@/utils/resumeTailor";
 
 export const initialUserProfile: UserProfile = {
-  fullName: "Alex Rivera",
-  headline: "Senior Full Stack Software Engineer | React, TypeScript, Next.js, Node.js, Python",
-  email: "alex.rivera.dev@gmail.com",
-  phone: "+1 (555) 234-5678",
-  location: "San Francisco, CA (Open to Remote)",
-  currentTitle: "Full Stack Software Engineer",
-  currentCompany: "CloudScale Technologies",
-  yearsExperience: 6,
+  fullName: "Kiran Kumar",
+  headline: "Senior Mainframe & C2C Solutions Consultant | COBOL, JCL, DB2, CICS, z/OS & Modernization",
+  email: "kiran.mainframe.consulting@gmail.com",
+  phone: "+1 (555) 789-4321",
+  location: "United States (Available Nationwide 100% Remote C2C)",
+  currentTitle: "Principal Mainframe Consultant",
+  currentCompany: "Apex Enterprise Consulting LLC",
+  yearsExperience: 8,
+  primaryDomain: "Mainframe",
   skills: [
-    "React",
-    "TypeScript",
-    "Next.js",
-    "Node.js",
-    "Python",
-    "Tailwind CSS",
-    "GraphQL",
-    "PostgreSQL",
-    "AWS",
-    "Docker",
-    "REST APIs",
-    "System Design"
+    "COBOL",
+    "JCL",
+    "DB2",
+    "CICS",
+    "VSAM",
+    "IBM z/OS",
+    "Mainframe Modernization",
+    "MQ Series",
+    "Endevor",
+    "Control-M",
+    "SyncSort",
+    "Assembler",
+    "SQL Performance Tuning",
+    "AWS Cloud Integration"
   ],
-  education: "B.S. in Computer Science - University of California, Berkeley (2018 - 2022)",
-  summary: "Results-driven Software Engineer with 6+ years of hands-on experience building high-throughput web applications, scalable distributed backends, and modern responsive frontend interfaces. Passionate about developer tooling, real-time collaboration, and clean architecture.",
-  resumeFileName: "Alex_Rivera_Senior_FullStack_Resume.pdf",
-  portfolioUrl: "https://alexrivera.dev",
-  githubUrl: "https://github.com/alexrivera",
-  linkedinUrl: "https://linkedin.com/in/alex-rivera-dev"
+  education: "B.Tech in Computer Science & Engineering",
+  summary: "Senior Mainframe Enterprise Consultant with 8+ years of expertise in mission-critical banking, financial, and healthcare z/OS architectures. Specialist in high-volume batch processing, CICS real-time transaction pipelines, DB2 query optimization, and Mainframe-to-Cloud API modernization. Available immediately on C2C (Corp-to-Corp) via verified business entity with complete insurance coverage.",
+  resumeFileName: "Kiran_Kumar_Senior_Mainframe_C2C_Master_Resume.pdf",
+  portfolioUrl: "https://kiran-mainframe.dev",
+  githubUrl: "https://github.com/narikkiran95-dot",
+  linkedinUrl: "https://linkedin.com/in/kiran-kumar-mainframe",
+  c2cEntityName: "Apex Enterprise Consulting LLC",
+  taxId: "XX-XXX8921"
 };
 
 export const mockJobs: Job[] = [
+  {
+    id: "job-mf-1",
+    title: "Senior Mainframe Developer (COBOL, JCL, DB2 - C2C Only)",
+    company: "Fidelity Investments",
+    companyLogo: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=120&auto=format&fit=crop&q=80",
+    location: "Boston, MA (100% Remote)",
+    workplaceType: "Remote",
+    jobType: "Contract",
+    contractType: "C2C",
+    c2cEligible: true,
+    domain: "Mainframe",
+    experienceLevel: "Mid-Senior level",
+    salary: "$90 - $115/hr C2C ($185,000 - $235,000/yr equivalent)",
+    hourlyRate: "$90 - $115/hr C2C",
+    postedAgo: "2 hours ago",
+    applicantsCount: 14,
+    easyApply: true,
+    matchScore: 98,
+    description: "Fidelity Investments is hiring a Senior Mainframe Consultant on a direct Corp-to-Corp (C2C) contract for our core asset management and trading settlement processing engines. You will lead complex COBOL/DB2 code enhancements, automate JCL production batch cycles, and interface legacy mainframe data with real-time enterprise APIs.",
+    skills: ["COBOL", "JCL", "DB2", "VSAM", "CICS", "IBM z/OS", "SyncSort", "Endevor"],
+    responsibilities: [
+      "Architect and refactor mission-critical COBOL and DB2 batch programs executing over 25M daily transactions.",
+      "Diagnose and remediate production abends, optimize JCL batch scheduling windows, and streamline sort utilities.",
+      "Work directly with enterprise data architects to optimize DB2 on z/OS table spaces, indexes, and SQL explain plans.",
+      "Support hybrid modernization initiatives exposing legacy CICS and DB2 services as RESTful microservices."
+    ],
+    qualifications: [
+      "7+ years of dedicated Mainframe development in Tier-1 financial institutions.",
+      "Mastery of Enterprise COBOL, JCL, VSAM, DB2 SQL optimization, and CICS commands.",
+      "Proven track record delivering reliable code in fast-turnaround C2C contract environments.",
+      "Experience with change management tools (Endevor, Changeman) and automated job schedulers (Control-M, CA7)."
+    ],
+    benefits: [
+      "Guaranteed Net-15 or Net-30 payment terms for Corp-to-Corp vendors",
+      "Long-term multi-year contract (12 months initial with annual renewals)",
+      "100% remote flexibility across all US time zones",
+      "Dedicated vendor support liaison"
+    ],
+    aboutCompany: "Fidelity Investments is one of the world's largest financial services providers, managing over $11 trillion in customer assets with state-of-the-art enterprise compute infrastructure.",
+    recruiter: {
+      name: "Heather Sterling",
+      role: "Lead Financial C2C Vendor Recruitment @ Fidelity",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80",
+      connectionDegree: "1st"
+    }
+  },
+  {
+    id: "job-mf-2",
+    title: "Lead Mainframe CICS & Systems Specialist (C2C Contract)",
+    company: "Bank of America",
+    companyLogo: "https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=120&auto=format&fit=crop&q=80",
+    location: "Charlotte, NC (100% Remote)",
+    workplaceType: "Remote",
+    jobType: "Contract",
+    contractType: "C2C",
+    c2cEligible: true,
+    domain: "Mainframe",
+    experienceLevel: "Mid-Senior level",
+    salary: "$95 - $125/hr C2C ($195,000 - $260,000/yr equivalent)",
+    hourlyRate: "$95 - $125/hr C2C",
+    postedAgo: "5 hours ago",
+    applicantsCount: 19,
+    easyApply: true,
+    matchScore: 95,
+    description: "Bank of America Global Technology is looking for an experienced Mainframe CICS Specialist for a long-term C2C engagement. The role oversees high-volume online transaction processing, sub-second latency tuning, and MQ Series messaging integration.",
+    skills: ["CICS", "COBOL", "IBM z/OS", "MQ Series", "DB2", "Assembler", "Performance Tuning"],
+    responsibilities: [
+      "Manage CICS regions, transaction definitions, thread limits, and storage violation diagnostics.",
+      "Design real-time inter-system communication using IBM MQ and TCP/IP sockets on z/OS.",
+      "Conduct memory leak profiling and response time tuning for consumer mobile banking transaction backends.",
+      "Coordinate with release management for zero-downtime weekend code promotions."
+    ],
+    qualifications: [
+      "8+ years of hands-on CICS transaction processing and COBOL programming.",
+      "Deep understanding of z/OS internals, SYSLOG analysis, and dump reading with Omegamon or Mainview.",
+      "Ability to engage immediately through an incorporated LLC/Corp on C2C billing.",
+      "Excellent communication and technical documentation capabilities."
+    ],
+    benefits: [
+      "High hourly billing rate with prompt bi-weekly direct vendor deposit",
+      "Immediate start date with streamlined remote hardware provisioning",
+      "Contract extension probability exceeding 90%"
+    ],
+    aboutCompany: "Bank of America is one of the world's leading financial institutions, serving individual consumers, small and middle-market businesses and large corporations with full banking and investment services.",
+    recruiter: {
+      name: "Marcus Vance",
+      role: "Strategic Vendor Talent Partner @ BofA",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      connectionDegree: "2nd"
+    }
+  },
+  {
+    id: "job-mf-3",
+    title: "Mainframe to AWS Cloud Modernization Architect (C2C)",
+    company: "Vanguard",
+    companyLogo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&auto=format&fit=crop&q=80",
+    location: "Malvern, PA (Remote C2C)",
+    workplaceType: "Remote",
+    jobType: "Contract",
+    contractType: "C2C",
+    c2cEligible: true,
+    domain: "Mainframe",
+    experienceLevel: "Director",
+    salary: "$115 - $145/hr C2C ($235,000 - $300,000/yr equivalent)",
+    hourlyRate: "$115 - $145/hr C2C",
+    postedAgo: "1 day ago",
+    applicantsCount: 22,
+    easyApply: true,
+    matchScore: 92,
+    description: "Vanguard is executing an enterprise-wide modernization roadmap to migrate core legacy batch data and business rules to AWS microservices. We seek an elite Mainframe Architect on a Corp-to-Corp contract to bridge COBOL/DB2 workloads with Kafka event streams and cloud data lakes.",
+    skills: ["Mainframe Modernization", "COBOL", "AWS Cloud Integration", "DB2", "Kafka", "SQL Performance Tuning"],
+    responsibilities: [
+      "Decompose legacy monolithic COBOL business rules and reverse-engineer database schemas.",
+      "Architect change data capture (CDC) pipelines streaming DB2 z/OS updates to AWS RDS and Kafka topics.",
+      "Provide technical advisory to cloud engineering teams on mainframe data types (COMP-3, EBCDIC).",
+      "Ensure data integrity, dual-run validation, and business continuity during cutover phases."
+    ],
+    qualifications: [
+      "10+ years combining deep Mainframe architecture with AWS / Cloud migration practices.",
+      "Extensive experience with automated migration toolchains and API gateway integration.",
+      "Valid US Corp/LLC entity in good standing for C2C contracting."
+    ],
+    benefits: [
+      "Top-tier compensation rate ($115 - $145/hr C2C)",
+      "High visibility transformation project shaping enterprise technology strategy",
+      "Flexible, autonomous remote consulting structure"
+    ],
+    aboutCompany: "Vanguard is an investor-owned investment management company offering low-cost index funds, mutual funds, and wealth management services to over 50 million investors globally.",
+    recruiter: {
+      name: "David Chen",
+      role: "Lead Enterprise Architecture Recruiter",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+      connectionDegree: "1st"
+    }
+  },
+  {
+    id: "job-mf-4",
+    title: "COBOL / Batch Production Support Specialist (C2C Contract)",
+    company: "State Farm Insurance",
+    companyLogo: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&auto=format&fit=crop&q=80",
+    location: "Bloomington, IL (100% Remote)",
+    workplaceType: "Remote",
+    jobType: "Contract",
+    contractType: "C2C",
+    c2cEligible: true,
+    domain: "Mainframe",
+    experienceLevel: "Mid-Senior level",
+    salary: "$85 - $105/hr C2C ($175,000 - $218,000/yr equivalent)",
+    hourlyRate: "$85 - $105/hr C2C",
+    postedAgo: "3 hours ago",
+    applicantsCount: 11,
+    easyApply: true,
+    matchScore: 96,
+    description: "State Farm is contracting a 24/7 Batch Production Support Mainframe Engineer on a Corp-to-Corp engagement. Focus is on resolving batch job abends, JCL restarts, incident triage, and SLA enforcement for claims and policy databases.",
+    skills: ["COBOL", "JCL", "Control-M", "DB2", "SyncSort", "IBM z/OS", "Endevor"],
+    responsibilities: [
+      "Triage critical nightly batch job abends (S0C4, S0C7, S806, S913, S013) within strict SLAs.",
+      "Implement emergency hotfixes and permanent JCL / COBOL code remediations via Endevor.",
+      "Fine-tune Control-M schedule dependencies, resource pools, and file triggers.",
+      "Publish incident root cause analysis (RCA) and preventive maintenance recommendations."
+    ],
+    qualifications: [
+      "6+ years in mainframe level 2 / level 3 production support and troubleshooting.",
+      "Expert knowledge of JCL parameters (DISP, DCB, SPACE, COND) and utility tools (IDCAMS, IEBGENER).",
+      "Demonstrated ability to work calmly under urgent production outage pressures.",
+      "Active C2C business entity ready for immediate vendor onboarding."
+    ],
+    benefits: [
+      "Reliable long-term contract with standard on-call rotation bonuses",
+      "Immediate project start upon vendor paperwork completion",
+      "Consistent 40-hour work week with approved overtime billing"
+    ],
+    aboutCompany: "State Farm is the largest property, casualty, and auto insurance provider in the United States, maintaining one of the world's most resilient mainframe private clouds.",
+    recruiter: {
+      name: "Jessica Taylor",
+      role: "Strategic IT Sourcing @ State Farm",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
+      connectionDegree: "2nd"
+    }
+  },
+  {
+    id: "job-mf-5",
+    title: "Mainframe DB2 Database Administrator & DBA Consultant (C2C)",
+    company: "Elevance Health (Anthem)",
+    companyLogo: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=120&auto=format&fit=crop&q=80",
+    location: "Indianapolis, IN (100% Remote)",
+    workplaceType: "Remote",
+    jobType: "Contract",
+    contractType: "C2C",
+    c2cEligible: true,
+    domain: "Mainframe",
+    experienceLevel: "Mid-Senior level",
+    salary: "$95 - $120/hr C2C ($195,000 - $250,000/yr equivalent)",
+    hourlyRate: "$95 - $120/hr C2C",
+    postedAgo: "1 day ago",
+    applicantsCount: 16,
+    easyApply: true,
+    matchScore: 94,
+    description: "Elevance Health (formerly Anthem Blue Cross) is seeking a Senior Mainframe DB2 DBA on a C2C basis. You will manage large-scale multi-terabyte healthcare claims databases on IBM z/OS, execute disaster recovery drills, and guide developers on optimal SQL structure.",
+    skills: ["DB2", "IBM z/OS", "JCL", "SQL Performance Tuning", "BMC Tools", "Mainframe Modernization"],
+    responsibilities: [
+      "Administer DB2 12/13 for z/OS subsystems, buffer pools, and EDM pools for healthcare claims systems.",
+      "Execute database maintenance tasks: REORG, RUNSTATS, COPY, RECOVER, and QUIESCE.",
+      "Optimize complex SQL queries, index definitions, and explain tables to eliminate CPU spikes.",
+      "Collaborate with compliance teams to enforce HIPAA encryption and data masking standards."
+    ],
+    qualifications: [
+      "7+ years of Mainframe DB2 Systems/Database Administration experience.",
+      "Fluency with IBM and BMC DB2 tools, Omegamon for DB2, and z/OS utilities.",
+      "C2C engagement model ready with business insurance and certificate of liability."
+    ],
+    benefits: [
+      "Comprehensive C2C vendor onboarding with direct weekly timecard approval",
+      "Contract duration: 18 months with strong likelihood of extension",
+      "Equipment provided and shipped directly to consultant home office"
+    ],
+    aboutCompany: "Elevance Health is a premier health company dedicated to improving lives and addressing health challenges through integrated solutions serving over 115 million individuals.",
+    recruiter: {
+      name: "Elena Rostova",
+      role: "Enterprise Healthcare IT Talent Lead",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      connectionDegree: "1st"
+    }
+  },
   {
     id: "job-1",
     title: "Senior Full Stack Engineer (Next.js & Node.js)",
@@ -40,363 +270,52 @@ export const mockJobs: Job[] = [
     location: "San Francisco, CA",
     workplaceType: "Remote",
     jobType: "Full-time",
+    contractType: "Full-time",
+    c2cEligible: false,
+    domain: "Cloud/Full Stack",
     experienceLevel: "Mid-Senior level",
     salary: "$165,000 - $210,000 · Full Benefits · Equity",
     postedAgo: "1 day ago",
     applicantsCount: 42,
     easyApply: true,
-    matchScore: 96,
-    description: "Stripe is seeking an experienced Senior Full Stack Engineer to build next-generation merchant billing and checkout experiences. You will collaborate directly with product managers, designers, and infrastructure teams to deliver high-reliability services used by millions of businesses worldwide.",
-    skills: ["React", "TypeScript", "Next.js", "Node.js", "PostgreSQL", "AWS", "System Design"],
+    matchScore: 82,
+    description: "Stripe is seeking an experienced Senior Full Stack Engineer to build next-generation merchant billing and checkout experiences.",
+    skills: ["React", "TypeScript", "Next.js", "Node.js", "PostgreSQL", "AWS Cloud Integration"],
     responsibilities: [
       "Architect and ship user-facing payment checkout flows with sub-second latency.",
-      "Lead cross-functional technical initiatives across payments and customer onboarding.",
-      "Mentor mid-level and junior engineers through rigorous code reviews and design docs.",
-      "Partner with security and compliance teams to ensure strict PCI-DSS safety standards."
+      "Lead cross-functional technical initiatives across payments and customer onboarding."
     ],
     qualifications: [
-      "5+ years of software engineering experience in high-growth SaaS environments.",
-      "Deep mastery of TypeScript, modern React, Next.js, and server-side runtimes.",
-      "Solid foundation in relational databases, SQL optimization, and distributed messaging.",
-      "Strong product intuition with empathy for user experience and edge case handling."
+      "5+ years of software engineering experience in high-growth SaaS environments."
     ],
     benefits: [
-      "Competitive base salary + comprehensive stock equity package",
-      "Unlimited paid time off (PTO) and paid family leave",
-      "Comprehensive medical, dental, and vision insurance with 100% premium coverage",
-      "$3,000 annual home office setup and continuous learning stipend"
+      "Competitive base salary + comprehensive stock equity package"
     ],
-    aboutCompany: "Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world's largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities.",
+    aboutCompany: "Stripe is a financial infrastructure platform for businesses.",
     recruiter: {
       name: "Sarah Jenkins",
       role: "Lead Technical Recruiter at Stripe",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
       connectionDegree: "2nd"
     }
-  },
-  {
-    id: "job-2",
-    title: "Staff Frontend Architect",
-    company: "Figma",
-    companyLogo: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=120&auto=format&fit=crop&q=80",
-    location: "New York, NY",
-    workplaceType: "Hybrid",
-    jobType: "Full-time",
-    experienceLevel: "Mid-Senior level",
-    salary: "$185,000 - $240,000 · Equity Grants",
-    postedAgo: "3 hours ago",
-    applicantsCount: 18,
-    easyApply: true,
-    matchScore: 92,
-    description: "Join Figma's Core Editor team to push the boundaries of what is possible in the browser. You will craft high-performance interactive canvassing tools, real-time multiplayer syncing, and reusable UI components that delight millions of designers and product creators.",
-    skills: ["React", "TypeScript", "WebAssembly", "Canvas API", "Performance Optimization", "Tailwind CSS"],
-    responsibilities: [
-      "Drive architecture decisions for the core canvas rendering engine and interaction model.",
-      "Eliminate frame drops and optimize 60fps rendering in complex enterprise design files.",
-      "Collaborate with WebAssembly and WebGL systems engineers on hybrid rendering pipelines.",
-      "Evangelize best frontend engineering practices across the entire engineering organization."
-    ],
-    qualifications: [
-      "6+ years of dedicated frontend engineering with profound DOM & browser runtime expertise.",
-      "Demonstrated track record of shipping complex interactive interfaces or graphics tools.",
-      "Expertise with TypeScript, WebGL/Canvas rendering, or complex state synchronization.",
-      "Clear, persuasive technical communication and collaborative mindset."
-    ],
-    benefits: [
-      "Generous equity and yearly refresh grants",
-      "Hybrid work flexibility (2 days in-office, 3 days remote)",
-      "Wellness stipend, gym reimbursement, and fertility benefits",
-      "Catered lunches and snacks in modern downtown offices"
-    ],
-    aboutCompany: "Figma connects everyone in the design process so teams can deliver better products, faster. Free, collaborative, and entirely browser-based, Figma brings together designers, engineers, and stakeholders.",
-    recruiter: {
-      name: "Marcus Vance",
-      role: "Director of Talent Acquisition @ Figma",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
-      connectionDegree: "1st"
-    }
-  },
-  {
-    id: "job-3",
-    title: "AI Full Stack Engineer",
-    company: "Anthropic",
-    companyLogo: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?w=120&auto=format&fit=crop&q=80",
-    location: "San Francisco, CA",
-    workplaceType: "Hybrid",
-    jobType: "Full-time",
-    experienceLevel: "Mid-Senior level",
-    salary: "$190,000 - $260,000 + Top-tier Equity",
-    postedAgo: "5 hours ago",
-    applicantsCount: 65,
-    easyApply: true,
-    matchScore: 89,
-    description: "Anthropic is looking for a versatile Full Stack Engineer to build tools, interfaces, and platforms that power the next generation of safe AI assistants. You will bridge advanced language model research with delightful, reliable end-user applications.",
-    skills: ["Python", "TypeScript", "React", "Next.js", "FastAPI", "Docker", "LLM APIs"],
-    responsibilities: [
-      "Build fluid streaming user experiences for conversational AI interfaces.",
-      "Create high-throughput APIs and evaluation pipelines to test model reasoning and safety.",
-      "Design telemetry, observability, and latency optimization dashboards.",
-      "Work closely with AI safety researchers to implement novel steerability mechanisms."
-    ],
-    qualifications: [
-      "Strong fluency across modern Python backends and TypeScript frontends.",
-      "Experience deploying production LLM or machine learning-driven web applications.",
-      "Commitment to AI safety, product reliability, and high-quality software craftsmanship.",
-      "Self-directed problem solver capable of flourishing in a fast-evolving research lab."
-    ],
-    benefits: [
-      "Comprehensive medical, dental, vision, life, and disability plans",
-      "Company-wide sabbatical programs and mental health support",
-      "Daily gourmet team lunches, dinners, and ergonomic workstation setups",
-      "Generous commuter and travel stipends"
-    ],
-    aboutCompany: "Anthropic is an AI safety and research company that builds reliable, interpretable, and steerable AI systems. We are creating state-of-the-art AI models that align with human values.",
-    recruiter: {
-      name: "Elena Rostova",
-      role: "AI Engineering Talent Partner",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
-      connectionDegree: "2nd"
-    }
-  },
-  {
-    id: "job-4",
-    title: "Senior Backend Engineer (Distributed Systems)",
-    company: "Datadog",
-    companyLogo: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&auto=format&fit=crop&q=80",
-    location: "New York, NY",
-    workplaceType: "Remote",
-    jobType: "Full-time",
-    experienceLevel: "Mid-Senior level",
-    salary: "$160,000 - $205,000 · RSUs",
-    postedAgo: "2 days ago",
-    applicantsCount: 38,
-    easyApply: true,
-    matchScore: 85,
-    description: "Datadog is building the monitoring and security platform for cloud applications. We are seeking a Senior Backend Engineer to join our Distributed Metrics Pipeline team processing tens of trillions of events per day.",
-    skills: ["Go", "Python", "Kafka", "PostgreSQL", "AWS", "Docker", "Distributed Systems"],
-    responsibilities: [
-      "Scale real-time data ingestion pipelines handling millions of points per second.",
-      "Optimize low-latency storage engines and query processing layers.",
-      "Drive incident root-cause investigations and implement automated self-healing mechanisms.",
-      "Contribute to open source telemetry standards and developer observability tools."
-    ],
-    qualifications: [
-      "4+ years building high-concurrency distributed systems in Go, Python, or Java.",
-      "Demonstrated experience with event streaming (Kafka, Pulsar) and distributed key-value stores.",
-      "Proficiency with Linux kernel internals, networking primitives, and memory profiling.",
-      "B.S. in Computer Science or equivalent practical industry experience."
-    ],
-    benefits: [
-      "Competitive compensation package with equity grants",
-      "Flexible PTO policy and paid parental leave",
-      "401(k) matching program up to 5%",
-      "Employee assistance programs and wellness stipends"
-    ],
-    aboutCompany: "Datadog is the essential monitoring and security platform for cloud applications. We bring together end-to-end traces, metrics, and logs to make applications, infrastructure, and third-party services entirely observable.",
-    recruiter: {
-      name: "David Chen",
-      role: "Senior Tech Recruiter @ Datadog",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
-      connectionDegree: "3rd"
-    }
-  },
-  {
-    id: "job-5",
-    title: "Lead React & React Native Engineer",
-    company: "Coinbase",
-    companyLogo: "https://images.unsplash.com/photo-1622979135225-d2ba269bc1df?w=120&auto=format&fit=crop&q=80",
-    location: "Austin, TX",
-    workplaceType: "Remote",
-    jobType: "Full-time",
-    experienceLevel: "Mid-Senior level",
-    salary: "$170,000 - $225,000 + Crypto Incentive Grants",
-    postedAgo: "1 day ago",
-    applicantsCount: 51,
-    easyApply: true,
-    matchScore: 91,
-    description: "Coinbase is looking for a Lead Mobile/Web Engineer to shape consumer wallet and trading applications. You will deliver intuitive, bulletproof financial transactions across web and mobile surfaces.",
-    skills: ["React", "React Native", "TypeScript", "Tailwind CSS", "GraphQL", "Mobile Security"],
-    responsibilities: [
-      "Architect shared cross-platform component libraries between web and mobile apps.",
-      "Collaborate with security engineers to safeguard cryptographic keys and transaction signatures.",
-      "Improve app launch times, network payload efficiency, and offline resilience.",
-      "Coordinate releases across Apple App Store, Google Play Store, and web production."
-    ],
-    qualifications: [
-      "5+ years creating production React and React Native client applications.",
-      "Deep understanding of native bridges, offline storage, and state management paradigms.",
-      "Passion for cryptocurrency, open protocols, and user privacy protection.",
-      "Strong track record leading multi-engineer client initiatives."
-    ],
-    benefits: [
-      "100% remote-first company culture with global team offsites",
-      "Comprehensive medical, dental, vision, and mental health benefits",
-      "Option to receive a portion of salary/bonuses in crypto",
-      "Generous sabbatical every 3 years of tenure"
-    ],
-    aboutCompany: "Coinbase is building the cryptoeconomy—a more fair, accessible, efficient, and transparent financial system enabled by crypto. We started in 2012 with the radical idea that anyone, anywhere, should be able to easily and safely send and receive Bitcoin.",
-    recruiter: {
-      name: "Jessica Taylor",
-      role: "FinTech Talent Lead",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
-      connectionDegree: "2nd"
-    }
-  },
-  {
-    id: "job-6",
-    title: "Cloud Infrastructure & DevOps Engineer",
-    company: "Vercel",
-    companyLogo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&auto=format&fit=crop&q=80",
-    location: "San Francisco, CA",
-    workplaceType: "Remote",
-    jobType: "Full-time",
-    experienceLevel: "Mid-Senior level",
-    salary: "$150,000 - $195,000 · Equity",
-    postedAgo: "4 days ago",
-    applicantsCount: 29,
-    easyApply: true,
-    matchScore: 84,
-    description: "Vercel's mission is to enable the world to ship the best products. We are looking for an experienced DevOps & Platform Engineer to enhance edge delivery networks, serverless compilation fleets, and automated preview deployments.",
-    skills: ["AWS", "Docker", "Kubernetes", "Terraform", "TypeScript", "CI/CD", "Next.js"],
-    responsibilities: [
-      "Maintain 99.99% availability for global edge network routing billions of requests daily.",
-      "Automate multi-cloud provisioning with Terraform and Pulumi.",
-      "Improve build pipeline caching and warm-start execution times for Next.js builds.",
-      "Participate in on-call rotations and lead proactive disaster recovery drills."
-    ],
-    qualifications: [
-      "4+ years operating cloud infrastructure on AWS, GCP, or Azure.",
-      "Expertise with container orchestration (Kubernetes, ECS), CI/CD pipelines, and IaC.",
-      "Familiarity with modern JavaScript runtimes (V8, Bun, Node) and edge workers.",
-      "Strong scripting abilities in Python, Bash, or TypeScript."
-    ],
-    benefits: [
-      "Work from anywhere in the world",
-      "Full coverage health insurance for employees and dependents",
-      "$2,500 annual workspace allowance + $1,500 wellness stipend",
-      "Flexible vacation time and quarterly recharge days"
-    ],
-    aboutCompany: "Vercel provides developer tools and cloud infrastructure to build, scale, and secure a faster, more personalized web. Creators of Next.js and pioneers of frontend cloud computing.",
-    recruiter: {
-      name: "Liam O'Connor",
-      role: "Platform Recruitment Partner",
-      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=80",
-      connectionDegree: "1st"
-    }
-  },
-  {
-    id: "job-7",
-    title: "Product Engineer (Growth & Activation)",
-    company: "Notion",
-    companyLogo: "https://images.unsplash.com/photo-1542744094-3a31f272c490?w=120&auto=format&fit=crop&q=80",
-    location: "San Francisco, CA",
-    workplaceType: "Hybrid",
-    jobType: "Full-time",
-    experienceLevel: "Mid-Senior level",
-    salary: "$175,000 - $220,000 · Equity",
-    postedAgo: "6 hours ago",
-    applicantsCount: 44,
-    easyApply: true,
-    matchScore: 94,
-    description: "Notion is looking for a creative, data-minded Product Engineer to scale user activation, collaboration invites, and self-serve team adoption. You will ship experiments, analyze conversion funnels, and craft intuitive onboarding flows.",
-    skills: ["React", "TypeScript", "Next.js", "Node.js", "PostgreSQL", "A/B Testing", "Tailwind CSS"],
-    responsibilities: [
-      "Design and execute high-velocity A/B tests across the user onboarding funnel.",
-      "Build delightful collaboration features that help new teams unlock Notion value in minutes.",
-      "Partner with growth data scientists to measure experiment statistical significance.",
-      "Ensure rapid page load and snappy micro-interactions throughout the product."
-    ],
-    qualifications: [
-      "4+ years building high-quality web products with React and TypeScript.",
-      "Proven interest in growth experimentation, product analytics, and customer conversion.",
-      "A high aesthetic bar for visual details, typography, and motion design.",
-      "Comfort working with full-stack technologies from React components to backend APIs."
-    ],
-    benefits: [
-      "Competitive salary + equity package",
-      "100% covered health, dental, and vision insurance",
-      "Commuter benefits and $1,500 annual wellness perk",
-      "Delicious catered team lunches and baristas in office"
-    ],
-    aboutCompany: "Notion is a single space where you can think, write, and plan. Capture thoughts, manage projects, or even run an entire company—and do it exactly the way you want.",
-    recruiter: {
-      name: "Chloe Miller",
-      role: "Product & Design Recruiter at Notion",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80",
-      connectionDegree: "2nd"
-    }
-  },
-  {
-    id: "job-8",
-    title: "Software Engineer - Developer Platforms",
-    company: "GitHub",
-    companyLogo: "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=120&auto=format&fit=crop&q=80",
-    location: "Remote - US",
-    workplaceType: "Remote",
-    jobType: "Full-time",
-    experienceLevel: "Mid-Senior level",
-    salary: "$155,000 - $200,000 + Microsoft Stock",
-    postedAgo: "3 days ago",
-    applicantsCount: 77,
-    easyApply: true,
-    matchScore: 88,
-    description: "GitHub is where 100M+ developers build software. We are looking for an engineer to join the Actions & Automation team, empowering developers to automate CI/CD workflows at unmatched scale.",
-    skills: ["TypeScript", "Go", "Docker", "REST APIs", "AWS", "CI/CD", "PostgreSQL"],
-    responsibilities: [
-      "Scale GitHub Actions backend runners to execute hundreds of millions of workflow minutes.",
-      "Build secure secrets management and token minting protocols for CI environments.",
-      "Maintain high developer satisfaction through fast, reliable workflow execution.",
-      "Collaborate with open source maintainers on automation best practices."
-    ],
-    qualifications: [
-      "4+ years of backend or full-stack software development experience.",
-      "Familiarity with container runtimes, virtual machines, and cloud compute orchestration.",
-      "Strong debugging abilities in complex distributed cloud environments.",
-      "Passion for developer productivity tools and open source software."
-    ],
-    benefits: [
-      "Microsoft 401(k) match and comprehensive health coverage",
-      "Flexible work from home options with home office allowance",
-      "Tuition assistance and continuous learning programs",
-      "Annual charity donation matching up to $15,000"
-    ],
-    aboutCompany: "GitHub is the complete developer platform to build, scale, and deliver secure software. Over 100 million developers and 90% of Fortune 100 companies trust GitHub to innovate together.",
-    recruiter: {
-      name: "Brandon Lee",
-      role: "Principal Talent Sourcer @ GitHub",
-      avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120&auto=format&fit=crop&q=80",
-      connectionDegree: "1st"
-    }
   }
 ];
 
 export const initialApplications: JobApplication[] = [
   {
-    id: "app-prev-1",
-    jobId: "job-7",
-    jobTitle: "Product Engineer (Growth & Activation)",
-    company: "Notion",
-    companyLogo: "https://images.unsplash.com/photo-1542744094-3a31f272c490?w=120&auto=format&fit=crop&q=80",
-    location: "San Francisco, CA",
-    salary: "$175,000 - $220,000",
-    appliedAt: "Yesterday at 4:30 PM",
+    id: "app-mf-1",
+    jobId: "job-mf-1",
+    jobTitle: "Senior Mainframe Developer (COBOL, JCL, DB2 - C2C Only)",
+    company: "Fidelity Investments",
+    companyLogo: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=120&auto=format&fit=crop&q=80",
+    location: "Boston, MA (100% Remote)",
+    salary: "$90 - $115/hr C2C",
+    contractType: "C2C",
+    appliedAt: "Just now",
     status: "Reviewing",
     method: "Easy Apply",
-    resumeUsed: "Alex_Rivera_Senior_FullStack_Resume.pdf",
-    notes: "Application viewed by Chloe Miller. Recruiter reached out regarding phone screen availability."
-  },
-  {
-    id: "app-prev-2",
-    jobId: "job-4",
-    jobTitle: "Senior Backend Engineer (Distributed Systems)",
-    company: "Datadog",
-    companyLogo: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&auto=format&fit=crop&q=80",
-    location: "New York, NY",
-    salary: "$160,000 - $205,000",
-    appliedAt: "3 days ago",
-    status: "Interviewing",
-    method: "Easy Apply",
-    resumeUsed: "Alex_Rivera_Senior_FullStack_Resume.pdf",
-    notes: "Technical phone screen completed with David Chen. Next step: 45-minute system design pairing session."
+    resumeUsed: "Kiran_Kumar_FidelityInvestments_C2C_Tailored_Resume.pdf",
+    tailoredResume: generateTailoredResume(mockJobs[0], initialUserProfile),
+    notes: "Tailored C2C resume highlighting COBOL, JCL, DB2 on z/OS, and business LLC incorporation submitted to Heather Sterling."
   }
 ];

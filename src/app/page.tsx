@@ -10,7 +10,7 @@ import { ApplicationTracker } from "@/components/ApplicationTracker";
 import { AutoApplyView } from "@/components/AutoApplyView";
 import { ProfileView } from "@/components/ProfileView";
 import { AnalyticsView } from "@/components/AnalyticsView";
-import { Job, JobApplication, UserProfile, AutoApplyConfig } from "@/types/job";
+import { Job, JobApplication, UserProfile, AutoApplyConfig, TailoredResume } from "@/types/job";
 import { mockJobs, initialApplications, initialUserProfile } from "@/data/mockJobs";
 
 export default function Home() {
@@ -21,14 +21,18 @@ export default function Home() {
   const [applications, setApplications] = useState<JobApplication[]>(initialApplications);
   const [userProfile, setUserProfile] = useState<UserProfile>(initialUserProfile);
   const [autoApplyConfig, setAutoApplyConfig] = useState<AutoApplyConfig>({
-    isActive: false,
-    targetTitles: ["Full Stack", "Frontend", "Backend"],
-    locations: ["San Francisco, CA", "Remote"],
-    workplaceTypes: ["Remote", "Hybrid"],
-    minSalary: 150000,
-    maxApplicationsPerDay: 10,
+    isActive: true,
+    targetTitles: ["Mainframe Developer", "COBOL", "CICS", "DB2", "z/OS Consultant"],
+    locations: ["Remote", "Boston, MA", "Charlotte, NC"],
+    workplaceTypes: ["Remote"],
+    minSalary: 175000,
+    maxApplicationsPerDay: 5,
     matchThresholdPercent: 85,
-    customCoverNote: "Hi there! I am excited about this role and look forward to discussing how my experience fits your goals."
+    customCoverNote: "Hi there! I am reaching out as an experienced Mainframe consultant with an active US LLC available immediately for Corp-to-Corp (C2C) engagement.",
+    c2cOnly: true,
+    autoTailorResume: true,
+    domainFilter: "Mainframe",
+    minHourlyRateC2C: 90
   });
 
   // Selected job for right detail panel
@@ -39,12 +43,14 @@ export default function Home() {
   const [isApplyModalOpen, setIsApplyModalOpen] = useState<boolean>(false);
   const [isBatchRunning, setIsBatchRunning] = useState<boolean>(false);
 
-  // Filters
+  // Filters: default to C2C and Mainframe friendly
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [locationQuery, setLocationQuery] = useState<string>("");
   const [workplaceType, setWorkplaceType] = useState<string>("all");
   const [experienceLevel, setExperienceLevel] = useState<string>("all");
   const [easyApplyOnly, setEasyApplyOnly] = useState<boolean>(false);
+  const [c2cOnly, setC2cOnly] = useState<boolean>(false); // user can toggle or click preset
+  const [domainFilter, setDomainFilter] = useState<string>("all");
 
   // Fetch / Sync with API
   const fetchJobs = async () => {
@@ -55,11 +61,18 @@ export default function Home() {
       if (workplaceType !== "all") params.set("workplaceType", workplaceType);
       if (experienceLevel !== "all") params.set("experienceLevel", experienceLevel);
       if (easyApplyOnly) params.set("easyApply", "true");
+      if (c2cOnly) params.set("c2cOnly", "true");
+      if (domainFilter !== "all") params.set("domain", domainFilter);
 
       const res = await fetch(`/api/jobs?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
         setJobs(data.jobs || []);
+        if (data.jobs && data.jobs.length > 0) {
+          // If current selected job is not in filtered list, select first
+          const stillThere = data.jobs.find((j: Job) => j.id === selectedJob?.id);
+          if (!stillThere) setSelectedJob(data.jobs[0]);
+        }
         if (data.applications) setApplications(data.applications);
         if (data.userProfile) setUserProfile(data.userProfile);
         if (data.autoApplyConfig) setAutoApplyConfig(data.autoApplyConfig);
@@ -71,7 +84,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchJobs();
-  }, [searchQuery, locationQuery, workplaceType, experienceLevel, easyApplyOnly]);
+  }, [searchQuery, locationQuery, workplaceType, experienceLevel, easyApplyOnly, c2cOnly, domainFilter]);
 
   const appliedJobIds = new Set(applications.map((a) => a.jobId));
 
@@ -80,7 +93,12 @@ export default function Home() {
     setIsApplyModalOpen(true);
   };
 
-  const handleApplySuccess = async (jobId: string, answers: Record<string, string>, notes: string) => {
+  const handleApplySuccess = async (
+    jobId: string, 
+    answers: Record<string, string>, 
+    notes: string, 
+    tailoredResume: TailoredResume
+  ) => {
     try {
       const res = await fetch("/api/jobs", {
         method: "POST",
@@ -90,7 +108,8 @@ export default function Home() {
           jobId,
           screeningAnswers: answers,
           notes,
-          method: "Easy Apply"
+          method: "Easy Apply",
+          tailoredResume
         })
       });
 
@@ -183,6 +202,8 @@ export default function Home() {
     setWorkplaceType("all");
     setExperienceLevel("all");
     setEasyApplyOnly(false);
+    setC2cOnly(false);
+    setDomainFilter("all");
   };
 
   return (
@@ -210,6 +231,10 @@ export default function Home() {
               setExperienceLevel={setExperienceLevel}
               easyApplyOnly={easyApplyOnly}
               setEasyApplyOnly={setEasyApplyOnly}
+              c2cOnly={c2cOnly}
+              setC2cOnly={setC2cOnly}
+              domainFilter={domainFilter}
+              setDomainFilter={setDomainFilter}
               totalResults={jobs.length}
               onReset={handleResetFilters}
             />
@@ -250,6 +275,7 @@ export default function Home() {
             config={autoApplyConfig}
             jobs={jobs}
             applications={applications}
+            userProfile={userProfile}
             onUpdateConfig={handleUpdateAutoApply}
             onRunBatch={handleRunAutoApplyBatch}
             isBatchRunning={isBatchRunning}

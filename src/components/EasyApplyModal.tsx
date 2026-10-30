@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { 
   X, 
   CheckCircle2, 
@@ -13,9 +13,13 @@ import {
   ArrowRight, 
   ArrowLeft,
   ShieldCheck,
-  Check
+  Check,
+  Briefcase,
+  Layers,
+  FileCheck2
 } from "lucide-react";
-import { Job, UserProfile } from "@/types/job";
+import { Job, UserProfile, TailoredResume } from "@/types/job";
+import { generateTailoredResume } from "@/utils/resumeTailor";
 import confetti from "canvas-confetti";
 
 interface EasyApplyModalProps {
@@ -23,7 +27,7 @@ interface EasyApplyModalProps {
   userProfile: UserProfile;
   isOpen: boolean;
   onClose: () => void;
-  onApplySuccess: (jobId: string, answers: Record<string, string>, notes: string) => void;
+  onApplySuccess: (jobId: string, answers: Record<string, string>, notes: string, tailoredResume: TailoredResume) => void;
 }
 
 export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
@@ -37,17 +41,34 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
 
+  // Compute tailored resume for this specific job
+  const tailoredResume = useMemo(() => {
+    if (!job) return null;
+    return generateTailoredResume(job, userProfile);
+  }, [job, userProfile]);
+
   // Form states
   const [phone, setPhone] = useState(userProfile.phone);
   const [email, setEmail] = useState(userProfile.email);
   const [yearsOfExp, setYearsOfExp] = useState(userProfile.yearsExperience.toString());
+  const [employmentModel, setEmploymentModel] = useState(job?.contractType === "C2C" || job?.c2cEligible ? "C2C (Corp-to-Corp)" : "W2");
+  const [c2cRate, setC2cRate] = useState(job?.hourlyRate || "$95/hr C2C");
   const [sponsorshipRequired, setSponsorshipRequired] = useState("No");
-  const [noticePeriod, setNoticePeriod] = useState("2 weeks");
-  const [customNote, setCustomNote] = useState(
-    `I am enthusiastic about the ${job?.title || "role"} at ${job?.company || "your team"}. With my background in ${job?.skills.slice(0, 3).join(", ") || "full-stack development"}, I can hit the ground running immediately.`
-  );
+  const [noticePeriod, setNoticePeriod] = useState("Immediate start");
+  const [useTailoredResume, setUseTailoredResume] = useState(true);
 
-  if (!isOpen || !job) return null;
+  const initialPitch = useMemo(() => {
+    if (!job) return "";
+    const isC2C = job.contractType === "C2C" || job.c2cEligible;
+    if (isC2C) {
+      return `Hi ${job.recruiter.name.split(" ")[0]}, I am reaching out as a Senior Consultant with an active US LLC (${userProfile.c2cEntityName || "Independent LLC"}) available immediately for this C2C engagement at ${job.company}. My expertise in ${job.skills.slice(0, 4).join(", ")} aligns directly with your deliverables.`;
+    }
+    return `Hi ${job.recruiter.name.split(" ")[0]}, I am eager to apply for the ${job.title} role at ${job.company}. My 8+ years hands-on experience in ${job.skills.slice(0, 3).join(", ")} will allow me to deliver immediate value to your engineering team.`;
+  }, [job, userProfile]);
+
+  const [customNote, setCustomNote] = useState(initialPitch);
+
+  if (!isOpen || !job || !tailoredResume) return null;
 
   const totalSteps = 4;
 
@@ -67,7 +88,6 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate brief network submission
     await new Promise((res) => setTimeout(res, 800));
     setIsSubmitting(false);
     setSubmitted(true);
@@ -79,7 +99,7 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
         origin: { y: 0.6 }
       });
     } catch (e) {
-      // fallback if canvas not available
+      // fallback
     }
 
     onApplySuccess(
@@ -88,10 +108,13 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
         phone,
         email,
         yearsOfExp,
+        employmentModel,
+        c2cRate,
         sponsorshipRequired,
         noticePeriod
       },
-      customNote
+      customNote,
+      tailoredResume
     );
   };
 
@@ -103,7 +126,7 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-in fade-in">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/40">
           <div className="flex items-center gap-3">
@@ -115,18 +138,24 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
                 <h3 className="font-semibold text-slate-900 dark:text-white text-base">
                   Apply to {job.company}
                 </h3>
-                <span className="bg-blue-50 text-[#0a66c2] text-[11px] font-bold px-2 py-0.5 rounded border border-blue-200">
-                  Easy Apply
-                </span>
+                {job.contractType === "C2C" ? (
+                  <span className="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded border border-amber-300">
+                    C2C Corp-to-Corp
+                  </span>
+                ) : (
+                  <span className="bg-blue-50 text-[#0a66c2] text-[11px] font-bold px-2 py-0.5 rounded border border-blue-200">
+                    Easy Apply
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {job.title} · {job.location}
+                {job.title} · {job.hourlyRate || job.salary}
               </p>
             </div>
           </div>
           <button
             onClick={resetAndClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -145,38 +174,42 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto flex-1">
           {submitted ? (
-            <div className="text-center py-8 space-y-4">
+            <div className="text-center py-6 space-y-4">
               <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <h4 className="text-2xl font-bold text-slate-900 dark:text-white">
-                Application Submitted!
+                Application & Tailored Resume Submitted!
               </h4>
-              <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto">
-                Your application for <strong className="text-slate-900 dark:text-white">{job.title}</strong> has been transmitted directly to {job.company}&apos;s talent team.
+              <p className="text-sm text-slate-600 dark:text-slate-300 max-w-lg mx-auto">
+                Your customized C2C application for <strong className="text-slate-900 dark:text-white">{job.title}</strong> has been transmitted directly to {job.company}&apos;s talent team with a tailor-fit resume.
               </p>
               
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 max-w-md mx-auto text-left text-xs space-y-2 text-slate-600 dark:text-slate-300">
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 max-w-lg mx-auto text-left text-xs space-y-2 text-slate-600 dark:text-slate-300">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Recruiter:</span>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">{job.recruiter.name}</span>
+                  <span className="text-slate-400">Target Recruiter:</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{job.recruiter.name} ({job.recruiter.role})</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Resume Attached:</span>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">{userProfile.resumeFileName}</span>
+                  <span className="text-slate-400">Tailored Resume:</span>
+                  <span className="font-semibold text-blue-600 dark:text-blue-400">{tailoredResume.fileName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Estimated Review Time:</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">Within 48 hours</span>
+                  <span className="text-slate-400">Contract Engagement:</span>
+                  <span className="font-semibold text-amber-600 dark:text-amber-400">{employmentModel} · {c2cRate}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Corporate Entity:</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{userProfile.c2cEntityName || "Independent LLC"}</span>
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-3">
                 <button
                   onClick={resetAndClose}
-                  className="px-6 py-2.5 bg-[#0a66c2] hover:bg-[#004182] text-white font-medium rounded-full text-sm transition shadow-sm"
+                  className="px-6 py-2.5 bg-[#0a66c2] hover:bg-[#004182] text-white font-medium rounded-full text-sm transition shadow-sm cursor-pointer"
                 >
-                  Done & View in Tracker
+                  Done & View in Application Tracker
                 </button>
               </div>
             </div>
@@ -186,23 +219,23 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
               <div className="flex items-center justify-between text-xs text-slate-500 mb-5">
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
                   Step {step} of {totalSteps}:{" "}
-                  {step === 1 && "Contact Info"}
-                  {step === 2 && "Resume & Experience"}
-                  {step === 3 && "Screening Questions"}
-                  {step === 4 && "Review & Submit"}
+                  {step === 1 && "Contact & C2C Entity"}
+                  {step === 2 && "AI Resume Tailoring Engine"}
+                  {step === 3 && "C2C Rates & Screening"}
+                  {step === 4 && "Final Review & Submit"}
                 </span>
-                <span className="flex items-center gap-1 text-[#0a66c2]">
+                <span className="flex items-center gap-1 text-emerald-600 font-semibold">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  Direct Recruiter Review
+                  Verified C2C Deliverable
                 </span>
               </div>
 
-              {/* Step 1: Contact Info */}
+              {/* Step 1: Contact & C2C Entity */}
               {step === 1 && (
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      Full Name
+                      Full Legal / Consultant Name
                     </label>
                     <input
                       type="text"
@@ -210,12 +243,41 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
                       value={userProfile.fullName}
                       className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 cursor-not-allowed"
                     />
-                    <p className="text-[11px] text-slate-400 mt-1">Pre-filled from your profile</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Corporate LLC / Business Entity
+                      </label>
+                      <input
+                        type="text"
+                        value={userProfile.c2cEntityName || "Apex Consulting LLC"}
+                        disabled
+                        className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300"
+                      />
+                      <p className="text-[10px] text-emerald-600 mt-1">✓ Active EIN / Tax ID on file for C2C</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Contact Phone
+                      </label>
+                      <div className="relative">
+                        <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                        <input
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white"
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      Email Address
+                      Business Email Address
                     </label>
                     <div className="relative">
                       <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -223,144 +285,124 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
+                        className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      Phone Number
-                    </label>
-                    <div className="relative">
-                      <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      Current Location
-                    </label>
-                    <input
-                      type="text"
-                      disabled
-                      value={userProfile.location}
-                      className="w-full px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 cursor-not-allowed"
-                    />
                   </div>
                 </div>
               )}
 
-              {/* Step 2: Resume & Experience */}
+              {/* Step 2: AI Resume Tailoring */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                      Selected Resume
-                    </label>
-                    <div className="p-3.5 border-2 border-[#0a66c2] bg-blue-50/50 dark:bg-blue-950/30 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center">
-                          <FileText className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                            {userProfile.resumeFileName}
-                          </p>
-                          <p className="text-xs text-slate-500">
-                            Updated October 2026 · Tailored for Full Stack & Senior roles
-                          </p>
-                        </div>
+                  <div className="p-4 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border border-blue-200 dark:border-blue-800 rounded-xl">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-[#0a66c2]" />
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-blue-950 dark:text-blue-200">
+                          Tailored Resume Generated for {job.company}
+                        </h4>
                       </div>
-                      <span className="text-xs font-semibold text-[#0a66c2] flex items-center gap-1">
-                        <Check className="w-4 h-4" /> Default
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                        {job.matchScore}% Match
                       </span>
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      Total Years of Professional Experience
-                    </label>
-                    <input
-                      type="number"
-                      value={yearsOfExp}
-                      onChange={(e) => setYearsOfExp(e.target.value)}
-                      className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
-                    />
-                  </div>
+                    <div className="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                      <div className="flex items-center gap-2 font-mono text-[11px] bg-white dark:bg-slate-900 p-2 rounded-lg border border-blue-100 dark:border-blue-900">
+                        <FileCheck2 className="w-4 h-4 text-[#0a66c2]" />
+                        <span className="font-bold text-slate-900 dark:text-white">{tailoredResume.fileName}</span>
+                      </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      Matched Core Skills for this Job
-                    </label>
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {job.skills.map((skill) => {
-                        const hasSkill = userProfile.skills.includes(skill);
-                        return (
-                          <span
-                            key={skill}
-                            className={`text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 ${
-                              hasSkill
-                                ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
-                                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
-                            }`}
-                          >
-                            {hasSkill && <Check className="w-3 h-3 text-emerald-600" />}
-                            {skill}
-                          </span>
-                        );
-                      })}
+                      <div className="bg-white/80 dark:bg-slate-900/80 p-3 rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Tailored Headline:</span>
+                          <p className="font-semibold text-slate-900 dark:text-white text-xs mt-0.5">
+                            {tailoredResume.tailoredHeadline}
+                          </p>
+                        </div>
+
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Targeted Executive Summary:</span>
+                          <p className="text-slate-600 dark:text-slate-300 text-xs mt-0.5 leading-relaxed">
+                            {tailoredResume.tailoredSummary}
+                          </p>
+                        </div>
+
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Key Tailored Bullets for this Role:</span>
+                          <ul className="list-disc pl-4 space-y-1 mt-1 text-[11px] text-slate-600 dark:text-slate-300">
+                            {tailoredResume.highlightedAchievements.slice(0, 3).map((ach, idx) => (
+                              <li key={idx}>{ach}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
 
-              {/* Step 3: Screening Questions */}
-              {step === 3 && (
-                <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      Will you now or in the future require visa sponsorship for employment?
+                      Targeted Core Technologies for this Position
                     </label>
-                    <div className="flex gap-4 mt-1.5">
-                      {["No", "Yes"].map((option) => (
-                        <label
-                          key={option}
-                          className="flex items-center gap-2 cursor-pointer text-sm text-slate-700 dark:text-slate-300"
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {job.skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="text-xs px-2.5 py-1 rounded-full font-medium bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1"
                         >
-                          <input
-                            type="radio"
-                            name="sponsorship"
-                            value={option}
-                            checked={sponsorshipRequired === option}
-                            onChange={(e) => setSponsorshipRequired(e.target.value)}
-                            className="text-[#0a66c2] focus:ring-[#0a66c2]"
-                          />
-                          {option}
-                        </label>
+                          <Check className="w-3 h-3 text-emerald-600" />
+                          {skill}
+                        </span>
                       ))}
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Step 3: C2C Rates & Screening */}
+              {step === 3 && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Contract Engagement Model
+                      </label>
+                      <select
+                        value={employmentModel}
+                        onChange={(e) => setEmploymentModel(e.target.value)}
+                        className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white"
+                      >
+                        <option value="C2C (Corp-to-Corp)">C2C (Corp-to-Corp) - Preferred</option>
+                        <option value="1099 Independent">1099 Independent</option>
+                        <option value="W2 Contract">W2 Contract</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Proposed C2C Billing Rate
+                      </label>
+                      <input
+                        type="text"
+                        value={c2cRate}
+                        onChange={(e) => setC2cRate(e.target.value)}
+                        className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white"
+                      />
+                    </div>
+                  </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                      What is your expected notice period?
+                      Earliest Consultant Availability / Notice Period
                     </label>
                     <select
                       value={noticePeriod}
                       onChange={(e) => setNoticePeriod(e.target.value)}
-                      className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
+                      className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white"
                     >
-                      <option value="Immediately">Available Immediately</option>
-                      <option value="1 week">1 week</option>
-                      <option value="2 weeks">2 weeks</option>
+                      <option value="Immediate start">Available Immediately (0-1 week)</option>
+                      <option value="2 weeks">2 weeks notice</option>
                       <option value="1 month">1 month</option>
                     </select>
                   </div>
@@ -368,61 +410,61 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                        Add a quick intro pitch note to the recruiter
+                        Tailored Recruiter Introduction Pitch
                       </label>
                       <span className="text-[11px] text-purple-600 dark:text-purple-400 font-medium flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" /> AI Crafted
+                        <Sparkles className="w-3 h-3" /> Auto-Generated for {job.company}
                       </span>
                     </div>
                     <textarea
                       rows={3}
                       value={customNote}
                       onChange={(e) => setCustomNote(e.target.value)}
-                      className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
+                      className="w-full px-3 py-2 text-xs sm:text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white"
                     />
                   </div>
                 </div>
               )}
 
-              {/* Step 4: Review */}
+              {/* Step 4: Final Review */}
               {step === 4 && (
                 <div className="space-y-3.5">
                   <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
                     <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Application Summary
+                      C2C Application Summary
                     </h5>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div>
-                        <span className="text-slate-400">Applicant:</span>
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">{userProfile.fullName}</p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">Position:</span>
+                        <span className="text-slate-400">Target Role:</span>
                         <p className="font-semibold text-slate-800 dark:text-slate-200">{job.title}</p>
                       </div>
                       <div>
-                        <span className="text-slate-400">Email:</span>
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">{email}</p>
+                        <span className="text-slate-400">Company:</span>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">{job.company}</p>
                       </div>
                       <div>
-                        <span className="text-slate-400">Phone:</span>
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">{phone}</p>
+                        <span className="text-slate-400">Engagement Model:</span>
+                        <p className="font-semibold text-amber-600 dark:text-amber-400">{employmentModel} ({c2cRate})</p>
                       </div>
                       <div>
-                        <span className="text-slate-400">Experience:</span>
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">{yearsOfExp} years</p>
+                        <span className="text-slate-400">Tailored Resume:</span>
+                        <p className="font-semibold text-blue-600 dark:text-blue-400 truncate">{tailoredResume.fileName}</p>
                       </div>
                       <div>
-                        <span className="text-slate-400">Notice:</span>
+                        <span className="text-slate-400">Availability:</span>
                         <p className="font-semibold text-slate-800 dark:text-slate-200">{noticePeriod}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400">Vendor Entity:</span>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">{userProfile.c2cEntityName || "Apex Consulting LLC"}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 rounded-xl text-xs text-blue-800 dark:text-blue-300 flex items-start gap-2.5">
-                    <ShieldCheck className="w-4 h-4 text-[#0a66c2] shrink-0 mt-0.5" />
+                  <div className="p-3 bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded-xl text-xs text-amber-900 dark:text-amber-300 flex items-start gap-2.5">
+                    <Briefcase className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <p>
-                      By pressing <strong>Submit Application</strong>, your resume ({userProfile.resumeFileName}) and profile data will be sent directly to {job.company}.
+                      By clicking <strong>Submit C2C Application</strong>, your tailored resume ({tailoredResume.fileName}) and C2C availability notes will be transmitted directly to {job.recruiter.name} at {job.company}.
                     </p>
                   </div>
                 </div>
@@ -439,7 +481,7 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
                 type="button"
                 onClick={handleBack}
                 disabled={isSubmitting}
-                className="px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition flex items-center gap-1"
+                className="px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition flex items-center gap-1 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Back
               </button>
@@ -447,7 +489,7 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
               <button
                 type="button"
                 onClick={resetAndClose}
-                className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition"
+                className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -457,16 +499,16 @@ export const EasyApplyModal: React.FC<EasyApplyModalProps> = ({
               type="button"
               onClick={handleNext}
               disabled={isSubmitting}
-              className="px-5 py-2.5 bg-[#0a66c2] hover:bg-[#004182] text-white text-xs font-semibold rounded-full transition shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+              className="px-5 py-2.5 bg-[#0a66c2] hover:bg-[#004182] text-white text-xs font-semibold rounded-full transition shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
                   <span className="animate-spin inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full" />
-                  Submitting Application...
+                  Transmitting C2C Application...
                 </>
               ) : step === totalSteps ? (
                 <>
-                  Submit Application <Check className="w-4 h-4" />
+                  Submit C2C Application <Check className="w-4 h-4" />
                 </>
               ) : (
                 <>

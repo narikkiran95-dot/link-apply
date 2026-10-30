@@ -10,11 +10,9 @@ import {
   CheckCircle, 
   Sparkles, 
   Zap, 
-  Share2, 
   Bookmark, 
   Briefcase, 
-  Award,
-  ChevronRight,
+  FileCheck2,
   ShieldCheck
 } from "lucide-react";
 import { Job } from "@/types/job";
@@ -26,6 +24,8 @@ interface JobDetailProps {
 }
 
 export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApply }) => {
+  const isC2C = job.contractType === "C2C" || job.c2cEligible;
+
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-6">
       {/* Top Banner & Quick Actions */}
@@ -35,9 +35,12 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
             <img src={job.companyLogo} alt={job.company} className="w-full h-full object-cover" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-tight">
-              {job.title}
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-tight">
+                {job.title}
+              </h2>
+            </div>
+
             <div className="flex flex-wrap items-center gap-2 mt-1.5 text-sm text-slate-600 dark:text-slate-400">
               <span className="font-semibold text-slate-900 dark:text-white hover:underline cursor-pointer">
                 {job.company}
@@ -53,18 +56,21 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
                 {job.postedAgo}
               </span>
             </div>
-            <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
-              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+
+            <div className="flex flex-wrap items-center gap-2 mt-2 text-xs">
+              {isC2C && (
+                <span className="bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-bold px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 flex items-center gap-1">
+                  <Briefcase className="w-3 h-3" /> C2C Offering (Corp-to-Corp)
+                </span>
+              )}
+              {job.domain === "Mainframe" && (
+                <span className="bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold px-2 py-0.5 rounded border border-indigo-200">
+                  Mainframe Architecture
+                </span>
+              )}
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                 <Users className="w-3.5 h-3.5" />
                 {job.applicantsCount} applicants
-              </span>
-              <span>·</span>
-              <span className="font-medium text-slate-700 dark:text-slate-300">
-                {job.jobType}
-              </span>
-              <span>·</span>
-              <span className="font-medium text-slate-700 dark:text-slate-300">
-                {job.experienceLevel}
               </span>
             </div>
           </div>
@@ -75,21 +81,21 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
           {hasApplied ? (
             <div className="w-full sm:w-auto px-5 py-2.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 rounded-full font-semibold text-sm flex items-center justify-center gap-2">
               <CheckCircle className="w-4 h-4" />
-              Applied
+              Applied with Tailored Resume
             </div>
           ) : (
             <button
               onClick={() => onOpenApply(job)}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#0a66c2] hover:bg-[#004182] text-white rounded-full font-semibold text-sm flex items-center justify-center gap-2 transition shadow-xs hover:shadow-md cursor-pointer"
+              className="w-full sm:w-auto px-6 py-2.5 bg-[#0a66c2] hover:bg-[#004182] text-white rounded-full font-bold text-sm flex items-center justify-center gap-2 transition shadow-xs hover:shadow-md cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-white" />
-              Easy Apply
+              {isC2C ? "Apply on C2C (Tailored)" : "Easy Apply"}
             </button>
           )}
 
           <button 
             title="Save job"
-            className="p-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+            className="p-2.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
           >
             <Bookmark className="w-4 h-4" />
           </button>
@@ -106,7 +112,9 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
               AI Resume Match Score
             </div>
             <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-              Strong match based on your skills in React, TypeScript & Full Stack
+              {job.domain === "Mainframe"
+                ? "Excellent match for COBOL, JCL, DB2, and z/OS systems"
+                : "Strong candidate match based on core competencies"}
             </p>
           </div>
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white dark:bg-slate-900 border-2 border-[#0a66c2] shadow-xs">
@@ -116,25 +124,40 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
           </div>
         </div>
 
-        {/* Salary Card */}
+        {/* Salary / Rate Card */}
         <div className="p-4 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-between">
           <div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
-              Estimated Total Compensation
+              {isC2C ? "C2C Hourly Billing Rate" : "Estimated Total Compensation"}
             </div>
-            <p className="text-sm font-bold text-slate-900 dark:text-white mt-1">
-              {job.salary}
+            <p className="text-base font-bold text-slate-900 dark:text-white mt-1">
+              {job.hourlyRate || job.salary}
             </p>
           </div>
-          <span className="text-xs text-slate-500 font-medium">Verified Range</span>
+          <span className="text-xs text-amber-700 dark:text-amber-300 font-bold bg-amber-50 dark:bg-amber-950 px-2 py-1 rounded border border-amber-200">
+            {isC2C ? "Corp-to-Corp" : "Direct Hire"}
+          </span>
+        </div>
+      </div>
+
+      {/* AI Per-Job Tailoring Feature Callout */}
+      <div className="p-4 bg-linear-to-r from-amber-50 to-blue-50 dark:from-amber-950/20 dark:to-blue-950/20 border border-amber-200/80 dark:border-amber-900/40 rounded-xl flex items-start gap-3 text-xs">
+        <FileCheck2 className="w-5 h-5 text-[#0a66c2] shrink-0 mt-0.5" />
+        <div className="space-y-0.5">
+          <span className="font-bold text-slate-900 dark:text-white">
+            Per-Position Tailored Resume Ready
+          </span>
+          <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+            When you apply to {job.company}, our engine customizes your resume highlights, emphasizes {job.skills.slice(0, 3).join(", ")}, and attaches your active C2C LLC business entity details automatically.
+          </p>
         </div>
       </div>
 
       {/* Meet the Hiring Team */}
       <div className="p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-xl">
         <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
-          Meet the Hiring Team
+          Meet the Hiring & Vendor Management Team
         </h4>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -158,7 +181,7 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
             </div>
           </div>
           <span className="text-xs text-[#0a66c2] font-semibold hover:underline cursor-pointer">
-            Message
+            Message Recruiter
           </span>
         </div>
       </div>
@@ -166,14 +189,14 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
       {/* Description */}
       <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
         <h3 className="text-base font-bold text-slate-900 dark:text-white">
-          About the Job
+          About the Job & Statement of Work
         </h3>
         <p>{job.description}</p>
 
         {/* Responsibilities */}
         <div>
           <h4 className="font-semibold text-slate-900 dark:text-white mb-2">
-            Key Responsibilities:
+            Key Responsibilities & Deliverables:
           </h4>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
             {job.responsibilities.map((resp, idx) => (
@@ -197,7 +220,7 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
         {/* Skills needed */}
         <div>
           <h4 className="font-semibold text-slate-900 dark:text-white mb-2">
-            Skills Required:
+            Required Technical Stack:
           </h4>
           <div className="flex flex-wrap gap-2">
             {job.skills.map((skill) => (
@@ -214,7 +237,7 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
         {/* Benefits */}
         <div>
           <h4 className="font-semibold text-slate-900 dark:text-white mb-2">
-            Benefits & Perks:
+            Contract Terms & Vendor Benefits:
           </h4>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-600 dark:text-slate-300 text-xs sm:text-sm">
             {job.benefits.map((b, idx) => (

@@ -6,8 +6,12 @@ export interface Job {
   location: string;
   workplaceType: "Remote" | "Hybrid" | "On-site";
   jobType: "Full-time" | "Part-time" | "Contract" | "Internship";
+  contractType?: "C2C" | "W2" | "Full-time" | "1099";
+  c2cEligible?: boolean;
+  domain?: "Mainframe" | "Cloud/Full Stack" | "AI/Data" | "DevOps";
   experienceLevel: "Entry level" | "Mid-Senior level" | "Director" | "Associate" | "Executive";
   salary: string;
+  hourlyRate?: string;
   postedAgo: string;
   applicantsCount: number;
   easyApply: boolean;
@@ -26,6 +30,18 @@ export interface Job {
   };
 }
 
+export interface TailoredResume {
+  jobId: string;
+  jobTitle: string;
+  company: string;
+  fileName: string;
+  tailoredHeadline: string;
+  tailoredSummary: string;
+  primarySkills: string[];
+  highlightedAchievements: string[];
+  c2cNote?: string;
+}
+
 export interface UserProfile {
   fullName: string;
   headline: string;
@@ -35,6 +51,7 @@ export interface UserProfile {
   currentTitle: string;
   currentCompany: string;
   yearsExperience: number;
+  primaryDomain: "Mainframe" | "Full Stack" | "DevOps";
   skills: string[];
   education: string;
   summary: string;
@@ -42,6 +59,8 @@ export interface UserProfile {
   portfolioUrl: string;
   githubUrl: string;
   linkedinUrl: string;
+  c2cEntityName?: string; // e.g. "Rivera Tech Consulting LLC"
+  taxId?: string;
 }
 
 export interface JobApplication {
@@ -52,10 +71,12 @@ export interface JobApplication {
   companyLogo: string;
   location: string;
   salary: string;
+  contractType?: string;
   appliedAt: string;
   status: "Applied" | "Reviewing" | "Interviewing" | "Offer" | "Rejected";
   method: "Easy Apply" | "External" | "Auto-Apply Agent";
   resumeUsed: string;
+  tailoredResume?: TailoredResume;
   notes?: string;
   screeningAnswers?: Record<string, string>;
 }
@@ -69,4 +90,8 @@ export interface AutoApplyConfig {
   maxApplicationsPerDay: number;
   matchThresholdPercent: number;
   customCoverNote: string;
+  c2cOnly: boolean;
+  autoTailorResume: boolean;
+  domainFilter: "all" | "Mainframe" | "Cloud/Full Stack";
+  minHourlyRateC2C: number;
 }
