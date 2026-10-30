@@ -13,7 +13,8 @@ import {
   Bookmark, 
   Briefcase, 
   FileCheck2,
-  ShieldCheck
+  ShieldCheck,
+  MessageSquare
 } from "lucide-react";
 import { Job } from "@/types/job";
 
@@ -21,9 +22,15 @@ interface JobDetailProps {
   job: Job;
   hasApplied: boolean;
   onOpenApply: (job: Job) => void;
+  onMessageRecruiter: (job: Job) => void;
 }
 
-export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApply }) => {
+export const JobDetail: React.FC<JobDetailProps> = ({ 
+  job, 
+  hasApplied, 
+  onOpenApply, 
+  onMessageRecruiter 
+}) => {
   const isC2C = job.contractType === "C2C" || job.c2cEligible;
 
   return (
@@ -77,21 +84,29 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
           {hasApplied ? (
-            <div className="w-full sm:w-auto px-5 py-2.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 rounded-full font-semibold text-sm flex items-center justify-center gap-2">
+            <div className="px-5 py-2.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 rounded-full font-semibold text-sm flex items-center justify-center gap-2">
               <CheckCircle className="w-4 h-4" />
-              Applied with Tailored Resume
+              Applied (C2C)
             </div>
           ) : (
             <button
               onClick={() => onOpenApply(job)}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#0a66c2] hover:bg-[#004182] text-white rounded-full font-bold text-sm flex items-center justify-center gap-2 transition shadow-xs hover:shadow-md cursor-pointer"
+              className="px-5 py-2.5 bg-[#0a66c2] hover:bg-[#004182] text-white rounded-full font-bold text-sm flex items-center justify-center gap-2 transition shadow-xs hover:shadow-md cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-white" />
               {isC2C ? "Apply on C2C (Tailored)" : "Easy Apply"}
             </button>
           )}
+
+          <button
+            onClick={() => onMessageRecruiter(job)}
+            className="px-4 py-2.5 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900 text-[#0a66c2] dark:text-blue-300 border border-blue-200 dark:border-blue-800 rounded-full font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            Message Recruiter
+          </button>
 
           <button 
             title="Save job"
@@ -180,9 +195,13 @@ export const JobDetail: React.FC<JobDetailProps> = ({ job, hasApplied, onOpenApp
               </p>
             </div>
           </div>
-          <span className="text-xs text-[#0a66c2] font-semibold hover:underline cursor-pointer">
-            Message Recruiter
-          </span>
+          <button
+            onClick={() => onMessageRecruiter(job)}
+            className="text-xs text-[#0a66c2] hover:text-[#004182] font-semibold hover:underline cursor-pointer flex items-center gap-1.5 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs"
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-[#0a66c2]" />
+            Message Recruiter Directly
+          </button>
         </div>
       </div>
 

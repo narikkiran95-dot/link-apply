@@ -10,6 +10,8 @@ import { ApplicationTracker } from "@/components/ApplicationTracker";
 import { AutoApplyView } from "@/components/AutoApplyView";
 import { ProfileView } from "@/components/ProfileView";
 import { AnalyticsView } from "@/components/AnalyticsView";
+import { ResumeViewerModal } from "@/components/ResumeViewerModal";
+import { RecruiterMessageModal } from "@/components/RecruiterMessageModal";
 import { Job, JobApplication, UserProfile, AutoApplyConfig, TailoredResume } from "@/types/job";
 import { mockJobs, initialApplications, initialUserProfile } from "@/data/mockJobs";
 
@@ -38,10 +40,14 @@ export default function Home() {
   // Selected job for right detail panel
   const [selectedJob, setSelectedJob] = useState<Job>(mockJobs[0]);
   
-  // Modal state
+  // Modal states
   const [modalJob, setModalJob] = useState<Job | null>(null);
   const [isApplyModalOpen, setIsApplyModalOpen] = useState<boolean>(false);
   const [isBatchRunning, setIsBatchRunning] = useState<boolean>(false);
+
+  // Resume Viewer & Recruiter Message Modals
+  const [inspectResumeApp, setInspectResumeApp] = useState<JobApplication | null>(null);
+  const [messageJob, setMessageJob] = useState<Job | null>(null);
 
   // Filters: default to C2C and Mainframe friendly
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -49,7 +55,7 @@ export default function Home() {
   const [workplaceType, setWorkplaceType] = useState<string>("all");
   const [experienceLevel, setExperienceLevel] = useState<string>("all");
   const [easyApplyOnly, setEasyApplyOnly] = useState<boolean>(false);
-  const [c2cOnly, setC2cOnly] = useState<boolean>(false); // user can toggle or click preset
+  const [c2cOnly, setC2cOnly] = useState<boolean>(false);
   const [domainFilter, setDomainFilter] = useState<string>("all");
 
   // Fetch / Sync with API
@@ -69,7 +75,6 @@ export default function Home() {
         const data = await res.json();
         setJobs(data.jobs || []);
         if (data.jobs && data.jobs.length > 0) {
-          // If current selected job is not in filtered list, select first
           const stillThere = data.jobs.find((j: Job) => j.id === selectedJob?.id);
           if (!stillThere) setSelectedJob(data.jobs[0]);
         }
@@ -258,6 +263,7 @@ export default function Home() {
                     job={selectedJob}
                     hasApplied={appliedJobIds.has(selectedJob.id)}
                     onOpenApply={handleOpenApplyModal}
+                    onMessageRecruiter={(j) => setMessageJob(j)}
                   />
                 ) : (
                   <div className="p-12 text-center text-slate-400">
@@ -286,7 +292,10 @@ export default function Home() {
         {activeTab === "tracker" && (
           <ApplicationTracker
             applications={applications}
+            jobs={jobs}
             onWithdraw={handleWithdrawApplication}
+            onInspectResume={(app) => setInspectResumeApp(app)}
+            onMessageRecruiter={(j) => setMessageJob(j)}
           />
         )}
 
@@ -314,6 +323,22 @@ export default function Home() {
         isOpen={isApplyModalOpen}
         onClose={() => setIsApplyModalOpen(false)}
         onApplySuccess={handleApplySuccess}
+      />
+
+      {/* Full Document Submitted Resume Viewer Modal */}
+      <ResumeViewerModal
+        isOpen={!!inspectResumeApp}
+        onClose={() => setInspectResumeApp(null)}
+        application={inspectResumeApp}
+        userProfile={userProfile}
+      />
+
+      {/* Direct Recruiter Messaging Modal */}
+      <RecruiterMessageModal
+        isOpen={!!messageJob}
+        onClose={() => setMessageJob(null)}
+        job={messageJob}
+        userProfile={userProfile}
       />
     </div>
   );

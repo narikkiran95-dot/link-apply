@@ -56,10 +56,12 @@ export interface UserProfile {
   education: string;
   summary: string;
   resumeFileName: string;
+  resumeFileSize?: string;
+  resumeLastUpdated?: string;
   portfolioUrl: string;
   githubUrl: string;
   linkedinUrl: string;
-  c2cEntityName?: string; // e.g. "Rivera Tech Consulting LLC"
+  c2cEntityName?: string; // e.g. "Apex Enterprise Consulting LLC"
   taxId?: string;
 }
 
@@ -94,4 +96,12 @@ export interface AutoApplyConfig {
   autoTailorResume: boolean;
   domainFilter: "all" | "Mainframe" | "Cloud/Full Stack";
   minHourlyRateC2C: number;
+}
+
+export interface RecruiterMessage {
+  id: string;
+  sender: "user" | "recruiter";
+  text: string;
+  timestamp: string;
+  attachment?: string;
 }
