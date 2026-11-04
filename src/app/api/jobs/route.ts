@@ -9,17 +9,17 @@ let userProfile = { ...initialUserProfile };
 
 let autoApplyConfig: AutoApplyConfig = {
   isActive: true,
-  targetTitles: ["Mainframe Developer", "COBOL", "CICS", "DB2", "z/OS Consultant"],
-  locations: ["Remote", "Boston, MA", "Charlotte, NC"],
+  targetTitles: ["Hogan IDS", "Mainframe Developer", "COBOL", "CICS", "DB2", "z/OS Consultant"],
+  locations: ["Remote", "Columbus, OH", "Boston, MA", "Charlotte, NC"],
   workplaceTypes: ["Remote"],
-  minSalary: 175000,
+  minSalary: 185000,
   maxApplicationsPerDay: 5,
   matchThresholdPercent: 85,
-  customCoverNote: "Hi there! I am reaching out as an experienced Mainframe consultant with an active US LLC available immediately for Corp-to-Corp (C2C) engagement. With 8+ years deep in COBOL, JCL, DB2, and CICS, I can integrate smoothly into your team.",
+  customCoverNote: "Hi there! I am reaching out as a Senior Mainframe Developer with approximately 10 years of experience across banking and financial enterprise transaction processing, including hands-on Hogan IDS (DDA/TDA deposit processing), Enterprise COBOL, DB2, JCL, and CICS. Available immediately for C2C engagement through my verified business entity.",
   c2cOnly: true,
   autoTailorResume: true,
   domainFilter: "Mainframe",
-  minHourlyRateC2C: 90
+  minHourlyRateC2C: 95
 };
 
 export async function GET(request: Request) {

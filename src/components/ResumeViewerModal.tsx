@@ -4,20 +4,18 @@ import React, { useState } from "react";
 import { 
   X, 
   Download, 
-  Printer, 
   FileText, 
   Check, 
   Building2, 
-  Mail, 
-  Phone, 
-  MapPin, 
   Briefcase, 
-  Award, 
-  ExternalLink,
-  ShieldCheck,
-  Copy
+  ShieldCheck, 
+  Copy,
+  Layers,
+  GraduationCap,
+  Cpu
 } from "lucide-react";
-import { JobApplication, UserProfile, TailoredResume } from "@/types/job";
+import { JobApplication, UserProfile, TailoredResume, WorkExperienceItem, EducationItem, SkillCategoryItem } from "@/types/job";
+import { defaultWorkExperience, defaultEducation, defaultSkillCategories, defaultHoganAlignment } from "@/utils/resumeTailor";
 
 interface ResumeViewerModalProps {
   isOpen: boolean;
@@ -40,47 +38,48 @@ export const ResumeViewerModal: React.FC<ResumeViewerModalProps> = ({
   const fileName = application.resumeUsed || tailored?.fileName || userProfile.resumeFileName;
   const headline = tailored?.tailoredHeadline || userProfile.headline;
   const summary = tailored?.tailoredSummary || userProfile.summary;
-  const primarySkills = tailored?.primarySkills || userProfile.skills;
-  const achievements = tailored?.highlightedAchievements || [
-    "Architected and optimized high-throughput enterprise batch and online transaction processing systems.",
-    "Led database indexing, query explain plans, and table space maintenance reducing compute load by 35%.",
-    "Streamlined production job scheduling, resolving critical nightly abends within SLA guidelines.",
-    "Spearheaded hybrid cloud modernization initiatives exposing legacy services to secure REST endpoints."
-  ];
+  const workExperience: WorkExperienceItem[] = tailored?.workExperience || userProfile.workExperience || defaultWorkExperience;
+  const educationList: EducationItem[] = tailored?.education || userProfile.educationList || defaultEducation;
+  const skillCategories: SkillCategoryItem[] = tailored?.skillCategories || userProfile.skillCategories || defaultSkillCategories;
+  const hoganAlignment: string[] = tailored?.hoganAlignment || userProfile.hoganAlignment || defaultHoganAlignment;
 
   const handleDownload = () => {
-    // Generate downloadable text representation
     const textContent = `
 ================================================================================
-${userProfile.fullName.toUpperCase()}
+KIRAN K INDURI
 ${headline}
-================================================================================
-Email: ${userProfile.email} | Phone: ${userProfile.phone}
-Location: ${userProfile.location}
-C2C Entity: ${userProfile.c2cEntityName || "Apex Enterprise Consulting LLC"} (EIN Verified)
++1 (770) 695-7976 | narik.kiran95@gmail.com | LinkedIn
 Target Position: ${application.jobTitle} - ${application.company}
-Resume File: ${fileName}
-Applied: ${application.appliedAt} via ${application.method}
---------------------------------------------------------------------------------
+C2C Entity: ${userProfile.c2cEntityName || "Apex Enterprise Consulting LLC"} (EIN Verified)
+================================================================================
 
-EXECUTIVE SUMMARY:
+PROFESSIONAL SUMMARY
 ${summary}
 
-CORE TECHNICAL COMPETENCIES:
-${primarySkills.join(" · ")}
+TECHNICAL SKILLS
+${skillCategories.map((sc) => `• ${sc.category}: ${sc.skills}`).join("\n")}
 
-KEY PROFESSIONAL DELIVERABLES & ACHIEVEMENTS:
-${achievements.map((a, i) => `• ${a}`).join("\n")}
+HOGAN IDS AND BANKING ALIGNMENT
+${hoganAlignment.map((h) => `• ${h}`).join("\n")}
 
-EDUCATION & CERTIFICATIONS:
-• ${userProfile.education}
-• IBM Certified Specialist - Enterprise Mainframe Systems & DB2 for z/OS
+PROFESSIONAL EXPERIENCE
+${workExperience
+  .map(
+    (exp) => `
+${exp.company} — ${exp.location}
+${exp.role} | ${exp.period}
+${exp.bullets.map((b) => `• ${b}`).join("\n")}
+Environment: ${exp.environment}
+`
+  )
+  .join("\n")}
 
-C2C / CORPORATE ENGAGEMENT:
-• Incorporated Vendor: ${userProfile.c2cEntityName || "Apex Enterprise Consulting LLC"}
-• Engagement Model: Corp-to-Corp (C2C)
-• Rate: ${application.salary || "$95 - $115/hr C2C"}
-• Availability: Immediate Nationwide Remote
+EDUCATION
+${educationList.map((edu) => `${edu.degree}\n${edu.institution} — ${edu.location} ${edu.year}`).join("\n\n")}
+
+================================================================================
+Document: ${fileName}
+Submitted to: ${application.company} via ${application.method} (${application.appliedAt})
 ================================================================================
 `.trim();
 
@@ -96,13 +95,11 @@ C2C / CORPORATE ENGAGEMENT:
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${userProfile.fullName}\n${headline}\n\nSummary:\n${summary}`);
+    navigator.clipboard.writeText(
+      `KIRAN K INDURI\n${headline}\n+1 (770) 695-7976 | narik.kiran95@gmail.com\n\nPROFESSIONAL SUMMARY:\n${summary}`
+    );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handlePrint = () => {
-    window.print();
   };
 
   return (
@@ -138,7 +135,7 @@ C2C / CORPORATE ENGAGEMENT:
               className="px-3 py-1.5 text-xs font-bold rounded-lg bg-[#0a66c2] hover:bg-[#004182] text-white transition flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
-              Download Document
+              Download Resume
             </button>
 
             <button
@@ -159,16 +156,16 @@ C2C / CORPORATE ENGAGEMENT:
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white uppercase">
-                    {userProfile.fullName}
+                    KIRAN K INDURI
                   </h1>
                   <p className="text-xs sm:text-sm font-semibold text-[#0a66c2] dark:text-blue-400 mt-1">
                     {headline}
                   </p>
                 </div>
-                <div className="text-xs text-slate-500 sm:text-right space-y-0.5">
-                  <p>{userProfile.email}</p>
-                  <p>{userProfile.phone}</p>
-                  <p>{userProfile.location}</p>
+                <div className="text-xs text-slate-600 dark:text-slate-300 sm:text-right space-y-0.5 font-medium">
+                  <p className="font-semibold text-slate-900 dark:text-white">+1 (770) 695-7976</p>
+                  <p className="text-blue-600 dark:text-blue-400 font-semibold">narik.kiran95@gmail.com</p>
+                  <p>LinkedIn Profile</p>
                 </div>
               </div>
 
@@ -195,88 +192,100 @@ C2C / CORPORATE ENGAGEMENT:
               <span className="text-xs font-bold text-[#0a66c2]">Rate: {application.salary}</span>
             </div>
 
-            {/* Executive Summary */}
+            {/* Professional Summary */}
             <div className="space-y-1.5">
               <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 pb-1">
-                Executive Consultant Summary
+                Professional Summary
               </h4>
-              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed text-justify">
                 {summary}
               </p>
             </div>
 
-            {/* Core Competencies */}
+            {/* Technical Skills (Categorized) */}
             <div className="space-y-2">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 pb-1">
-                Targeted Core Competencies & Technical Skills
+              <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 pb-1 flex items-center gap-1.5">
+                <Cpu className="w-3.5 h-3.5 text-[#0a66c2]" />
+                Technical Skills
               </h4>
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {primarySkills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-xs rounded-md border border-slate-200 dark:border-slate-700"
-                  >
-                    {skill}
-                  </span>
+              <div className="space-y-2 text-xs">
+                {skillCategories.map((sc) => (
+                  <div key={sc.category} className="grid grid-cols-1 sm:grid-cols-4 gap-1">
+                    <span className="font-bold text-slate-900 dark:text-white sm:col-span-1">
+                      {sc.category}:
+                    </span>
+                    <span className="text-slate-600 dark:text-slate-300 sm:col-span-3">
+                      {sc.skills}
+                    </span>
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Key Deliverables & Achievements */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 pb-1">
-                Key Professional Achievements & Deliverables
+            {/* Hogan IDS and Banking Alignment */}
+            <div className="space-y-2 p-3.5 bg-amber-50/60 dark:bg-amber-950/20 rounded-xl border border-amber-200 dark:border-amber-900">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-amber-600" />
+                Hogan IDS and Banking Alignment
               </h4>
-              <ul className="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 pl-4 list-disc leading-relaxed">
-                {achievements.map((ach, idx) => (
-                  <li key={idx} className="pl-1">
-                    {ach}
+              <ul className="space-y-1 text-xs text-slate-700 dark:text-slate-300 pl-4 list-disc leading-relaxed">
+                {hoganAlignment.map((item, idx) => (
+                  <li key={idx} className="pl-0.5">
+                    {item}
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Work History */}
-            <div className="space-y-3">
+            {/* Professional Experience */}
+            <div className="space-y-5">
               <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 pb-1">
                 Professional Experience
               </h4>
 
-              <div className="space-y-1 text-xs">
-                <div className="flex justify-between items-baseline font-bold text-slate-900 dark:text-white">
-                  <span>{userProfile.currentTitle}</span>
-                  <span className="text-slate-500 font-normal">2021 – Present</span>
+              {workExperience.map((exp, idx) => (
+                <div key={idx} className="space-y-2 text-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-slate-100 dark:border-slate-800/80 pb-1">
+                    <span className="font-bold text-sm text-slate-900 dark:text-white">
+                      {exp.company} — <span className="font-normal text-slate-500">{exp.location}</span>
+                    </span>
+                    <span className="text-slate-500 font-semibold">{exp.period}</span>
+                  </div>
+                  <div className="font-semibold text-xs text-[#0a66c2] dark:text-blue-400">
+                    {exp.role}
+                  </div>
+                  <ul className="space-y-1 text-xs text-slate-700 dark:text-slate-300 pl-4 list-disc leading-relaxed">
+                    {exp.bullets.map((b, bIdx) => (
+                      <li key={bIdx} className="pl-0.5">
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  {exp.environment && (
+                    <div className="text-[11px] text-slate-500 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-200 dark:border-slate-700/60">
+                      <strong className="text-slate-700 dark:text-slate-300">Environment:</strong> {exp.environment}
+                    </div>
+                  )}
                 </div>
-                <div className="text-slate-600 dark:text-slate-400 font-medium">
-                  {userProfile.currentCompany} (Operating as Principal C2C Vendor)
-                </div>
-                <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed pt-1">
-                  Provided architectural direction and high-throughput programming for core financial and enterprise legacy platforms. Optimized mission-critical batch workflows and ensured 99.999% system availability under stringent enterprise SLAs.
-                </p>
-              </div>
-
-              <div className="space-y-1 text-xs pt-2">
-                <div className="flex justify-between items-baseline font-bold text-slate-900 dark:text-white">
-                  <span>Senior Systems Engineer / Mainframe Programmer</span>
-                  <span className="text-slate-500 font-normal">2017 – 2021</span>
-                </div>
-                <div className="text-slate-600 dark:text-slate-400 font-medium">
-                  Enterprise Technology Solutions Inc.
-                </div>
-                <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed pt-1">
-                  Maintained core transactional backends, engineered custom automated JCL test suites, and streamlined relational database queries on IBM z/OS subsystems.
-                </p>
-              </div>
+              ))}
             </div>
 
-            {/* Education & Credentials */}
+            {/* Education */}
             <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                Education & Industry Certifications
+              <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-[#0a66c2]" />
+                Education
               </h4>
-              <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                <p className="font-semibold">{userProfile.education}</p>
-                <p className="text-slate-500">IBM Certified Specialist · z/OS Enterprise Architecture & DB2 Systems</p>
+              <div className="space-y-2 text-xs">
+                {educationList.map((edu, idx) => (
+                  <div key={idx} className="flex justify-between items-baseline">
+                    <div>
+                      <p className="font-bold text-slate-900 dark:text-white">{edu.degree}</p>
+                      <p className="text-slate-500">{edu.institution} — {edu.location}</p>
+                    </div>
+                    <span className="text-slate-500 font-semibold">{edu.year}</span>
+                  </div>
+                ))}
               </div>
             </div>
 

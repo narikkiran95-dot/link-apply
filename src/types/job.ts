@@ -30,6 +30,27 @@ export interface Job {
   };
 }
 
+export interface WorkExperienceItem {
+  company: string;
+  location: string;
+  role: string;
+  period: string;
+  bullets: string[];
+  environment: string;
+}
+
+export interface EducationItem {
+  degree: string;
+  institution: string;
+  location: string;
+  year: string;
+}
+
+export interface SkillCategoryItem {
+  category: string;
+  skills: string;
+}
+
 export interface TailoredResume {
   jobId: string;
   jobTitle: string;
@@ -39,6 +60,10 @@ export interface TailoredResume {
   tailoredSummary: string;
   primarySkills: string[];
   highlightedAchievements: string[];
+  workExperience?: WorkExperienceItem[];
+  education?: EducationItem[];
+  skillCategories?: SkillCategoryItem[];
+  hoganAlignment?: string[];
   c2cNote?: string;
 }
 
@@ -53,6 +78,10 @@ export interface UserProfile {
   yearsExperience: number;
   primaryDomain: "Mainframe" | "Full Stack" | "DevOps";
   skills: string[];
+  skillCategories?: SkillCategoryItem[];
+  hoganAlignment?: string[];
+  workExperience?: WorkExperienceItem[];
+  educationList?: EducationItem[];
   education: string;
   summary: string;
   resumeFileName: string;

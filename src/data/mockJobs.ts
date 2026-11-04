@@ -1,43 +1,113 @@
 import { Job, UserProfile, JobApplication } from "@/types/job";
-import { generateTailoredResume } from "@/utils/resumeTailor";
+import { 
+  generateTailoredResume, 
+  defaultWorkExperience, 
+  defaultEducation, 
+  defaultSkillCategories, 
+  defaultHoganAlignment 
+} from "@/utils/resumeTailor";
 
 export const initialUserProfile: UserProfile = {
-  fullName: "Kiran Kumar",
-  headline: "Senior Mainframe & C2C Solutions Consultant | COBOL, JCL, DB2, CICS, z/OS & Modernization",
-  email: "kiran.mainframe.consulting@gmail.com",
-  phone: "+1 (555) 789-4321",
+  fullName: "KIRAN K INDURI",
+  headline: "Senior Mainframe Developer | Hogan IDS | COBOL, DB2, JCL",
+  email: "narik.kiran95@gmail.com",
+  phone: "+1 (770) 695-7976",
   location: "United States (Available Nationwide 100% Remote C2C)",
-  currentTitle: "Principal Mainframe Consultant",
-  currentCompany: "Apex Enterprise Consulting LLC",
-  yearsExperience: 8,
+  currentTitle: "Senior Mainframe Developer",
+  currentCompany: "Citi Bank",
+  yearsExperience: 10,
   primaryDomain: "Mainframe",
   skills: [
-    "COBOL",
+    "Hogan IDS",
+    "Enterprise COBOL",
+    "DB2 for z/OS",
     "JCL",
-    "DB2",
     "CICS",
-    "VSAM",
+    "VSAM KSDS",
     "IBM z/OS",
-    "Mainframe Modernization",
-    "MQ Series",
-    "Endevor",
+    "DDA/TDA Deposit Processing",
+    "Core Banking",
+    "TSO/ISPF",
+    "SDSF",
+    "CA7",
     "Control-M",
-    "SyncSort",
-    "Assembler",
-    "SQL Performance Tuning",
-    "AWS Cloud Integration"
+    "File-AID",
+    "Xpediter",
+    "Abend-AID",
+    "ChangeMan ZMF",
+    "Endevor",
+    "IBM z/OS Connect EE",
+    "REST APIs",
+    "JSON",
+    "REXX",
+    "Python",
+    "IDCAMS",
+    "DFSORT",
+    "Easytrieve",
+    "HLASM / Assembler"
   ],
-  education: "B.Tech in Computer Science & Engineering",
-  summary: "Senior Mainframe Enterprise Consultant with 8+ years of expertise in mission-critical banking, financial, and healthcare z/OS architectures. Specialist in high-volume batch processing, CICS real-time transaction pipelines, DB2 query optimization, and Mainframe-to-Cloud API modernization. Available immediately on C2C (Corp-to-Corp) via verified business entity with complete insurance coverage.",
-  resumeFileName: "Kiran_Kumar_Senior_Mainframe_C2C_Master_Resume.pdf",
-  portfolioUrl: "https://kiran-mainframe.dev",
+  skillCategories: defaultSkillCategories,
+  hoganAlignment: defaultHoganAlignment,
+  workExperience: defaultWorkExperience,
+  educationList: defaultEducation,
+  education: "M.S. in Computer Science & Information Systems (Christian Brothers University, 2022) | B.Tech in Computer Science (JNTU, 2016)",
+  summary: "Senior Mainframe Developer with approximately 10 years of experience developing, maintaining, testing, and supporting IBM mainframe applications across banking, financial services, and enterprise transaction processing. Hands-on Hogan IDS experience, including exposure to DDA/TDA deposit processing, supported by strong Enterprise COBOL, DB2, JCL, CICS, and VSAM skills. Experienced in translating business requirements into technical specifications, analyzing application dependencies, implementing batch and online enhancements, and resolving production incidents. Strong background in file processing, job flow analysis, embedded SQL, test-data preparation, reconciliation, and release support.",
+  resumeFileName: "KIRAN_K_INDURI_Senior_Mainframe_Hogan_Master_Resume.pdf",
+  resumeFileSize: "296 KB",
+  resumeLastUpdated: "Updated today",
+  portfolioUrl: "https://linkedin.com/in/kiran-k-induri",
   githubUrl: "https://github.com/narikkiran95-dot",
-  linkedinUrl: "https://linkedin.com/in/kiran-kumar-mainframe",
+  linkedinUrl: "https://linkedin.com/in/kiran-k-induri",
   c2cEntityName: "Apex Enterprise Consulting LLC",
   taxId: "XX-XXX8921"
 };
 
 export const mockJobs: Job[] = [
+  {
+    id: "job-mf-hogan",
+    title: "Senior Mainframe Developer - Hogan IDS & Core Banking (C2C Only)",
+    company: "JPMorgan Chase & Co.",
+    companyLogo: "https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=120&auto=format&fit=crop&q=80",
+    location: "Columbus, OH (100% Remote C2C)",
+    workplaceType: "Remote",
+    jobType: "Contract",
+    contractType: "C2C",
+    c2cEligible: true,
+    domain: "Mainframe",
+    experienceLevel: "Mid-Senior level",
+    salary: "$100 - $130/hr C2C ($205,000 - $270,000/yr equivalent)",
+    hourlyRate: "$100 - $130/hr C2C",
+    postedAgo: "1 hour ago",
+    applicantsCount: 9,
+    easyApply: true,
+    matchScore: 99,
+    description: "JPMorgan Chase is seeking a Senior Mainframe Developer with deep hands-on Hogan IDS and core banking deposit processing (DDA/TDA) experience on an immediate Corp-to-Corp (C2C) contract. You will architect, maintain, and enhance mission-critical banking ledger and deposit transaction workflows using Enterprise COBOL, DB2, JCL, and CICS.",
+    skills: ["Hogan IDS", "Enterprise COBOL", "DB2 for z/OS", "JCL", "CICS", "DDA/TDA Deposit Processing", "IBM z/OS", "CA7"],
+    responsibilities: [
+      "Develop and enhance Hogan IDS core banking application logic supporting demand deposit and time deposit processing workflows.",
+      "Analyze business requirements with business analysts and operations teams to define batch and online processing rules.",
+      "Modify Enterprise COBOL batch programs, CICS online transactions, and DB2 embedded SQL queries.",
+      "Triage batch abends and production incidents using SDSF, File-AID, Xpediter, and Abend-AID.",
+      "Integrate legacy core banking feeds with enterprise microservices using z/OS Connect EE and REST interfaces."
+    ],
+    qualifications: [
+      "8+ years of dedicated Mainframe development experience with hands-on Hogan IDS core banking platform exposure.",
+      "Mastery of Enterprise COBOL, JCL cataloged procedures, VSAM, CICS, and DB2 on z/OS.",
+      "Active US LLC / business entity in good standing ready for immediate C2C vendor onboarding."
+    ],
+    benefits: [
+      "Top-tier hourly C2C billing rate ($100 - $130/hr)",
+      "Long-term multi-year contract engagement (12 months initial with annual renewals)",
+      "100% remote flexibility across US time zones with vendor direct deposit"
+    ],
+    aboutCompany: "JPMorgan Chase & Co. is a leading global financial services firm with assets of over $3.7 trillion and operations worldwide, processing trillions in daily global transaction volume.",
+    recruiter: {
+      name: "Victoria Sterling",
+      role: "Vice President - Core Banking & C2C Vendor Talent",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80",
+      connectionDegree: "1st"
+    }
+  },
   {
     id: "job-mf-1",
     title: "Senior Mainframe Developer (COBOL, JCL, DB2 - C2C Only)",
@@ -57,7 +127,7 @@ export const mockJobs: Job[] = [
     easyApply: true,
     matchScore: 98,
     description: "Fidelity Investments is hiring a Senior Mainframe Consultant on a direct Corp-to-Corp (C2C) contract for our core asset management and trading settlement processing engines. You will lead complex COBOL/DB2 code enhancements, automate JCL production batch cycles, and interface legacy mainframe data with real-time enterprise APIs.",
-    skills: ["COBOL", "JCL", "DB2", "VSAM", "CICS", "IBM z/OS", "SyncSort", "Endevor"],
+    skills: ["Enterprise COBOL", "JCL", "DB2 for z/OS", "VSAM KSDS", "CICS", "IBM z/OS", "DFSORT", "Endevor"],
     responsibilities: [
       "Architect and refactor mission-critical COBOL and DB2 batch programs executing over 25M daily transactions.",
       "Diagnose and remediate production abends, optimize JCL batch scheduling windows, and streamline sort utilities.",
@@ -101,9 +171,9 @@ export const mockJobs: Job[] = [
     postedAgo: "5 hours ago",
     applicantsCount: 19,
     easyApply: true,
-    matchScore: 95,
+    matchScore: 97,
     description: "Bank of America Global Technology is looking for an experienced Mainframe CICS Specialist for a long-term C2C engagement. The role oversees high-volume online transaction processing, sub-second latency tuning, and MQ Series messaging integration.",
-    skills: ["CICS", "COBOL", "IBM z/OS", "MQ Series", "DB2", "Assembler", "Performance Tuning"],
+    skills: ["CICS", "Enterprise COBOL", "IBM z/OS", "DB2 for z/OS", "HLASM / Assembler", "CA7"],
     responsibilities: [
       "Manage CICS regions, transaction definitions, thread limits, and storage violation diagnostics.",
       "Design real-time inter-system communication using IBM MQ and TCP/IP sockets on z/OS.",
@@ -113,8 +183,7 @@ export const mockJobs: Job[] = [
     qualifications: [
       "8+ years of hands-on CICS transaction processing and COBOL programming.",
       "Deep understanding of z/OS internals, SYSLOG analysis, and dump reading with Omegamon or Mainview.",
-      "Ability to engage immediately through an incorporated LLC/Corp on C2C billing.",
-      "Excellent communication and technical documentation capabilities."
+      "Ability to engage immediately through an incorporated LLC/Corp on C2C billing."
     ],
     benefits: [
       "High hourly billing rate with prompt bi-weekly direct vendor deposit",
@@ -146,24 +215,21 @@ export const mockJobs: Job[] = [
     postedAgo: "1 day ago",
     applicantsCount: 22,
     easyApply: true,
-    matchScore: 92,
+    matchScore: 94,
     description: "Vanguard is executing an enterprise-wide modernization roadmap to migrate core legacy batch data and business rules to AWS microservices. We seek an elite Mainframe Architect on a Corp-to-Corp contract to bridge COBOL/DB2 workloads with Kafka event streams and cloud data lakes.",
-    skills: ["Mainframe Modernization", "COBOL", "AWS Cloud Integration", "DB2", "Kafka", "SQL Performance Tuning"],
+    skills: ["Enterprise COBOL", "IBM z/OS Connect EE", "DB2 for z/OS", "REST APIs", "Python", "JSON"],
     responsibilities: [
       "Decompose legacy monolithic COBOL business rules and reverse-engineer database schemas.",
       "Architect change data capture (CDC) pipelines streaming DB2 z/OS updates to AWS RDS and Kafka topics.",
-      "Provide technical advisory to cloud engineering teams on mainframe data types (COMP-3, EBCDIC).",
-      "Ensure data integrity, dual-run validation, and business continuity during cutover phases."
+      "Provide technical advisory to cloud engineering teams on mainframe data types (COMP-3, EBCDIC)."
     ],
     qualifications: [
-      "10+ years combining deep Mainframe architecture with AWS / Cloud migration practices.",
-      "Extensive experience with automated migration toolchains and API gateway integration.",
+      "10+ years combining deep Mainframe architecture with cloud and API gateway integration.",
       "Valid US Corp/LLC entity in good standing for C2C contracting."
     ],
     benefits: [
       "Top-tier compensation rate ($115 - $145/hr C2C)",
-      "High visibility transformation project shaping enterprise technology strategy",
-      "Flexible, autonomous remote consulting structure"
+      "High visibility transformation project shaping enterprise technology strategy"
     ],
     aboutCompany: "Vanguard is an investor-owned investment management company offering low-cost index funds, mutual funds, and wealth management services to over 50 million investors globally.",
     recruiter: {
@@ -190,25 +256,22 @@ export const mockJobs: Job[] = [
     postedAgo: "3 hours ago",
     applicantsCount: 11,
     easyApply: true,
-    matchScore: 96,
-    description: "State Farm is contracting a 24/7 Batch Production Support Mainframe Engineer on a Corp-to-Corp engagement. Focus is on resolving batch job abends, JCL restarts, incident triage, and SLA enforcement for claims and policy databases.",
-    skills: ["COBOL", "JCL", "Control-M", "DB2", "SyncSort", "IBM z/OS", "Endevor"],
+    matchScore: 97,
+    description: "State Farm is contracting a Batch Production Support Mainframe Engineer on a Corp-to-Corp engagement. Focus is on resolving batch job abends, JCL restarts, incident triage with Abend-AID and File-AID, and SLA enforcement for policy databases.",
+    skills: ["Enterprise COBOL", "JCL", "Control-M", "DB2 for z/OS", "DFSORT", "IBM z/OS", "Abend-AID", "File-AID"],
     responsibilities: [
       "Triage critical nightly batch job abends (S0C4, S0C7, S806, S913, S013) within strict SLAs.",
-      "Implement emergency hotfixes and permanent JCL / COBOL code remediations via Endevor.",
-      "Fine-tune Control-M schedule dependencies, resource pools, and file triggers.",
-      "Publish incident root cause analysis (RCA) and preventive maintenance recommendations."
+      "Implement emergency hotfixes and permanent JCL / COBOL code remediations via Endevor/ChangeMan.",
+      "Fine-tune Control-M / CA7 schedule dependencies, resource pools, and file triggers."
     ],
     qualifications: [
       "6+ years in mainframe level 2 / level 3 production support and troubleshooting.",
       "Expert knowledge of JCL parameters (DISP, DCB, SPACE, COND) and utility tools (IDCAMS, IEBGENER).",
-      "Demonstrated ability to work calmly under urgent production outage pressures.",
       "Active C2C business entity ready for immediate vendor onboarding."
     ],
     benefits: [
       "Reliable long-term contract with standard on-call rotation bonuses",
-      "Immediate project start upon vendor paperwork completion",
-      "Consistent 40-hour work week with approved overtime billing"
+      "Immediate project start upon vendor paperwork completion"
     ],
     aboutCompany: "State Farm is the largest property, casualty, and auto insurance provider in the United States, maintaining one of the world's most resilient mainframe private clouds.",
     recruiter: {
@@ -235,24 +298,21 @@ export const mockJobs: Job[] = [
     postedAgo: "1 day ago",
     applicantsCount: 16,
     easyApply: true,
-    matchScore: 94,
+    matchScore: 95,
     description: "Elevance Health (formerly Anthem Blue Cross) is seeking a Senior Mainframe DB2 DBA on a C2C basis. You will manage large-scale multi-terabyte healthcare claims databases on IBM z/OS, execute disaster recovery drills, and guide developers on optimal SQL structure.",
-    skills: ["DB2", "IBM z/OS", "JCL", "SQL Performance Tuning", "BMC Tools", "Mainframe Modernization"],
+    skills: ["DB2 for z/OS", "IBM z/OS", "JCL", "Enterprise COBOL", "File-AID", "VSAM KSDS"],
     responsibilities: [
       "Administer DB2 12/13 for z/OS subsystems, buffer pools, and EDM pools for healthcare claims systems.",
       "Execute database maintenance tasks: REORG, RUNSTATS, COPY, RECOVER, and QUIESCE.",
-      "Optimize complex SQL queries, index definitions, and explain tables to eliminate CPU spikes.",
-      "Collaborate with compliance teams to enforce HIPAA encryption and data masking standards."
+      "Optimize complex SQL queries, index definitions, and explain tables to eliminate CPU spikes."
     ],
     qualifications: [
       "7+ years of Mainframe DB2 Systems/Database Administration experience.",
-      "Fluency with IBM and BMC DB2 tools, Omegamon for DB2, and z/OS utilities.",
       "C2C engagement model ready with business insurance and certificate of liability."
     ],
     benefits: [
       "Comprehensive C2C vendor onboarding with direct weekly timecard approval",
-      "Contract duration: 18 months with strong likelihood of extension",
-      "Equipment provided and shipped directly to consultant home office"
+      "Contract duration: 18 months with strong likelihood of extension"
     ],
     aboutCompany: "Elevance Health is a premier health company dedicated to improving lives and addressing health challenges through integrated solutions serving over 115 million individuals.",
     recruiter: {
@@ -261,47 +321,26 @@ export const mockJobs: Job[] = [
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
       connectionDegree: "1st"
     }
-  },
-  {
-    id: "job-1",
-    title: "Senior Full Stack Engineer (Next.js & Node.js)",
-    company: "Stripe",
-    companyLogo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&auto=format&fit=crop&q=80",
-    location: "San Francisco, CA",
-    workplaceType: "Remote",
-    jobType: "Full-time",
-    contractType: "Full-time",
-    c2cEligible: false,
-    domain: "Cloud/Full Stack",
-    experienceLevel: "Mid-Senior level",
-    salary: "$165,000 - $210,000 · Full Benefits · Equity",
-    postedAgo: "1 day ago",
-    applicantsCount: 42,
-    easyApply: true,
-    matchScore: 82,
-    description: "Stripe is seeking an experienced Senior Full Stack Engineer to build next-generation merchant billing and checkout experiences.",
-    skills: ["React", "TypeScript", "Next.js", "Node.js", "PostgreSQL", "AWS Cloud Integration"],
-    responsibilities: [
-      "Architect and ship user-facing payment checkout flows with sub-second latency.",
-      "Lead cross-functional technical initiatives across payments and customer onboarding."
-    ],
-    qualifications: [
-      "5+ years of software engineering experience in high-growth SaaS environments."
-    ],
-    benefits: [
-      "Competitive base salary + comprehensive stock equity package"
-    ],
-    aboutCompany: "Stripe is a financial infrastructure platform for businesses.",
-    recruiter: {
-      name: "Sarah Jenkins",
-      role: "Lead Technical Recruiter at Stripe",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
-      connectionDegree: "2nd"
-    }
   }
 ];
 
 export const initialApplications: JobApplication[] = [
+  {
+    id: "app-mf-hogan",
+    jobId: "job-mf-hogan",
+    jobTitle: "Senior Mainframe Developer - Hogan IDS & Core Banking (C2C Only)",
+    company: "JPMorgan Chase & Co.",
+    companyLogo: "https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=120&auto=format&fit=crop&q=80",
+    location: "Columbus, OH (100% Remote C2C)",
+    salary: "$100 - $130/hr C2C",
+    contractType: "C2C",
+    appliedAt: "Just now",
+    status: "Reviewing",
+    method: "Easy Apply",
+    resumeUsed: "KIRAN_K_INDURI_JPMorganChase_C2C_Tailored_Resume.pdf",
+    tailoredResume: generateTailoredResume(mockJobs[0], initialUserProfile),
+    notes: "Tailored C2C resume highlighting Hogan IDS DDA/TDA deposit processing, Citi Bank & Capital One tenure, and verified LLC incorporation submitted to Victoria Sterling."
+  },
   {
     id: "app-mf-1",
     jobId: "job-mf-1",
@@ -311,11 +350,11 @@ export const initialApplications: JobApplication[] = [
     location: "Boston, MA (100% Remote)",
     salary: "$90 - $115/hr C2C",
     contractType: "C2C",
-    appliedAt: "Just now",
-    status: "Reviewing",
+    appliedAt: "Yesterday at 4:30 PM",
+    status: "Interviewing",
     method: "Easy Apply",
-    resumeUsed: "Kiran_Kumar_FidelityInvestments_C2C_Tailored_Resume.pdf",
-    tailoredResume: generateTailoredResume(mockJobs[0], initialUserProfile),
-    notes: "Tailored C2C resume highlighting COBOL, JCL, DB2 on z/OS, and business LLC incorporation submitted to Heather Sterling."
+    resumeUsed: "KIRAN_K_INDURI_FidelityInvestments_C2C_Tailored_Resume.pdf",
+    tailoredResume: generateTailoredResume(mockJobs[1], initialUserProfile),
+    notes: "Technical phone screen completed with Heather Sterling. Recruiter scheduled 30-min architecture discussion."
   }
 ];

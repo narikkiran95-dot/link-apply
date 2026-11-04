@@ -21,6 +21,12 @@ import {
   RefreshCw
 } from "lucide-react";
 import { UserProfile } from "@/types/job";
+import { 
+  defaultWorkExperience, 
+  defaultEducation, 
+  defaultSkillCategories, 
+  defaultHoganAlignment 
+} from "@/utils/resumeTailor";
 
 interface ProfileViewProps {
   profile: UserProfile;
@@ -54,30 +60,52 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
   const setPresetMainframe = () => {
     const updated: UserProfile = {
       ...formData,
-      headline: "Senior Mainframe & C2C Solutions Consultant | COBOL, JCL, DB2, CICS, z/OS & Modernization",
-      currentTitle: "Principal Mainframe Consultant",
+      fullName: "KIRAN K INDURI",
+      headline: "Senior Mainframe Developer | Hogan IDS | COBOL, DB2, JCL",
+      email: "narik.kiran95@gmail.com",
+      phone: "+1 (770) 695-7976",
+      currentTitle: "Senior Mainframe Developer",
+      currentCompany: "Citi Bank",
       primaryDomain: "Mainframe",
       c2cEntityName: "Apex Enterprise Consulting LLC",
-      resumeFileName: "Kiran_Kumar_Senior_Mainframe_C2C_Master_Resume.pdf",
-      resumeFileSize: "284 KB",
-      resumeLastUpdated: "Just now",
+      resumeFileName: "KIRAN_K_INDURI_Senior_Mainframe_Hogan_Master_Resume.pdf",
+      resumeFileSize: "296 KB",
+      resumeLastUpdated: "Loaded just now",
       skills: [
-        "COBOL",
+        "Hogan IDS",
+        "Enterprise COBOL",
+        "DB2 for z/OS",
         "JCL",
-        "DB2",
         "CICS",
-        "VSAM",
+        "VSAM KSDS",
         "IBM z/OS",
-        "Mainframe Modernization",
-        "MQ Series",
-        "Endevor",
+        "DDA/TDA Deposit Processing",
+        "Core Banking",
+        "TSO/ISPF",
+        "SDSF",
+        "CA7",
         "Control-M",
-        "SyncSort",
-        "Assembler",
-        "SQL Performance Tuning",
-        "AWS Cloud Integration"
+        "File-AID",
+        "Xpediter",
+        "Abend-AID",
+        "ChangeMan ZMF",
+        "Endevor",
+        "IBM z/OS Connect EE",
+        "REST APIs",
+        "JSON",
+        "REXX",
+        "Python",
+        "IDCAMS",
+        "DFSORT",
+        "Easytrieve",
+        "HLASM / Assembler"
       ],
-      summary: "Senior Mainframe Enterprise Consultant with 8+ years of expertise in mission-critical banking, financial, and healthcare z/OS architectures. Available immediately on C2C (Corp-to-Corp) via verified business entity with complete insurance coverage."
+      workExperience: defaultWorkExperience,
+      educationList: defaultEducation,
+      skillCategories: defaultSkillCategories,
+      hoganAlignment: defaultHoganAlignment,
+      education: "M.S. in Computer Science & Information Systems (Christian Brothers University, 2022) | B.Tech in Computer Science (JNTU, 2016)",
+      summary: "Senior Mainframe Developer with approximately 10 years of experience developing, maintaining, testing, and supporting IBM mainframe applications across banking, financial services, and enterprise transaction processing. Hands-on Hogan IDS experience, including exposure to DDA/TDA deposit processing, supported by strong Enterprise COBOL, DB2, JCL, CICS, and VSAM skills."
     };
     setFormData(updated);
     onSaveProfile(updated);
@@ -107,7 +135,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
     const updated: UserProfile = {
       ...formData,
       resumeFileName: presetFileName,
-      resumeFileSize: "250 KB",
+      resumeFileSize: "296 KB",
       resumeLastUpdated: "Selected just now"
     };
     setFormData(updated);
@@ -138,10 +166,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-linear-to-tr from-[#0a66c2] to-amber-500 text-white flex items-center justify-center font-bold text-2xl shadow-md">
-            {formData.fullName
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
+            KI
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -165,7 +190,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
             className="px-3.5 py-2 bg-blue-50 dark:bg-blue-950/60 text-[#0a66c2] dark:text-blue-300 rounded-xl border border-blue-200 text-xs font-bold hover:bg-blue-100 transition flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Load Mainframe C2C Preset
+            Reload Hogan IDS & Mainframe Preset
           </button>
 
           {isSaved && (
@@ -252,7 +277,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium"
                 />
               </div>
 
@@ -264,7 +289,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
                   type="text"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium"
                 />
               </div>
             </div>
@@ -283,7 +308,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                About / C2C Capability Summary
+                About / Professional & C2C Summary
               </label>
               <textarea
                 rows={4}
@@ -322,7 +347,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
                       {formData.resumeFileName}
                     </p>
                     <p className="text-xs text-slate-500">
-                      {formData.resumeFileSize || "284 KB"} · {formData.resumeLastUpdated || "Updated for 2026 C2C Roles"}
+                      {formData.resumeFileSize || "296 KB"} · {formData.resumeLastUpdated || "Updated for 2026 C2C Roles"}
                     </p>
                   </div>
                 </div>
@@ -342,13 +367,13 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
               {/* Pre-packaged Resume Template Chooser */}
               <div className="mt-2.5 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
-                  Or select a specialized pre-formatted C2C resume:
+                  Available Verified Master Versions:
                 </span>
                 <div className="flex flex-col gap-1.5 text-xs">
                   {[
-                    "Kiran_Kumar_Senior_Mainframe_C2C_Master_Resume.pdf",
-                    "Kiran_Kumar_COBOL_DB2_CICS_Architect_Resume.pdf",
-                    "Kiran_Kumar_Mainframe_Cloud_Modernization_Resume.pdf"
+                    "KIRAN_K_INDURI_Senior_Mainframe_Hogan_Master_Resume.pdf",
+                    "KIRAN_K_INDURI_Hogan_IDS_Deposit_Processing_C2C.pdf",
+                    "KIRAN_K_INDURI_CitiBank_Mainframe_Lead_Resume.pdf"
                   ].map((resName) => (
                     <button
                       key={resName}
@@ -422,7 +447,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ profile, onSaveProfile
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Add skill (e.g. COBOL, JCL, DB2, CICS)..."
+                  placeholder="Add skill (e.g. Hogan IDS, COBOL, DB2)..."
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                   onKeyDown={(e) => {
