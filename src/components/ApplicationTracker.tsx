@@ -8,18 +8,18 @@ import {
   Building2, 
   FileText, 
   Trash2, 
-  ExternalLink,
-  CheckCircle,
-  Eye,
-  AlertCircle,
-  Search,
-  CheckCircle2,
-  Calendar,
-  Briefcase,
-  FileCheck2,
-  ChevronDown,
-  ChevronUp,
-  MessageSquare
+  CheckCircle, 
+  Eye, 
+  Search, 
+  Briefcase, 
+  FileCheck2, 
+  MessageSquare,
+  Sparkles,
+  RefreshCw,
+  User,
+  Phone,
+  Mail,
+  Check
 } from "lucide-react";
 import { JobApplication, Job } from "@/types/job";
 
@@ -29,6 +29,7 @@ interface ApplicationTrackerProps {
   onWithdraw: (applicationId: string) => void;
   onInspectResume: (application: JobApplication) => void;
   onMessageRecruiter: (job: Job) => void;
+  onSyncOfficialResume?: () => void;
 }
 
 export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
@@ -36,11 +37,21 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
   jobs,
   onWithdraw,
   onInspectResume,
-  onMessageRecruiter
+  onMessageRecruiter,
+  onSyncOfficialResume
 }) => {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [c2cFilter, setC2cFilter] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
+  const [syncedNotice, setSyncedNotice] = useState(false);
+
+  const handleSync = () => {
+    if (onSyncOfficialResume) {
+      onSyncOfficialResume();
+      setSyncedNotice(true);
+      setTimeout(() => setSyncedNotice(false), 3000);
+    }
+  };
 
   const filtered = applications.filter((app) => {
     if (filterStatus !== "all" && app.status !== filterStatus) return false;
@@ -78,17 +89,30 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              Application Tracker
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Application Tracker
+              </h2>
+              <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-bold border border-emerald-200">
+                KIRAN K INDURI
+              </span>
+            </div>
             <p className="text-xs text-slate-500 mt-1">
-              Live status of all Easy Apply and AI-automated C2C submissions with complete submitted resume viewer.
+              Active C2C submissions for <strong>KIRAN K INDURI</strong> · +1 (770) 695-7976 · narik.kiran95@gmail.com
             </p>
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleSync}
+              className="px-3.5 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 dark:bg-blue-950 dark:hover:bg-blue-900 text-[#0a66c2] dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              {syncedNotice ? "Synced KIRAN K INDURI Resume!" : "Sync Official Resume"}
+            </button>
+
             <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950 text-[#0a66c2] border border-blue-200 dark:border-blue-800">
-              {applications.length} Total Submissions
+              {applications.length} Submissions
             </span>
           </div>
         </div>
@@ -148,14 +172,15 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-3.5">
           {filtered.map((app) => {
             const matchingJob = jobs.find((j) => j.id === app.jobId);
+            const tailored = app.tailoredResume;
 
             return (
               <div
                 key={app.id}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition space-y-3.5"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition space-y-4"
               >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="flex items-start gap-3.5">
@@ -196,6 +221,10 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-400">
+                        <span className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
+                          <User className="w-3.5 h-3.5 text-[#0a66c2]" /> KIRAN K INDURI
+                        </span>
+                        <span>·</span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" /> Applied: {app.appliedAt}
                         </span>
@@ -243,6 +272,29 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
                     </button>
                   </div>
                 </div>
+
+                {/* Inline Resume Snapshot */}
+                {tailored && (
+                  <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700/80 text-xs space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 pb-1 border-b border-slate-200/60 dark:border-slate-700/60">
+                      <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <FileText className="w-3.5 h-3.5 text-[#0a66c2]" />
+                        Applicant: <strong>KIRAN K INDURI</strong> (+1 770-695-7976)
+                      </span>
+                      <span className="text-[#0a66c2] font-mono font-medium truncate max-w-xs">{tailored.fileName}</span>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-bold uppercase text-slate-400">Consultant Headline:</span>
+                      <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{tailored.tailoredHeadline}</p>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-bold uppercase text-slate-400">Submitted Summary:</span>
+                      <p className="text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">{tailored.tailoredSummary}</p>
+                    </div>
+                  </div>
+                )}
 
                 {app.notes && (
                   <div className="text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex items-start gap-2">

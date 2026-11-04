@@ -3,8 +3,20 @@ import { mockJobs, initialApplications, initialUserProfile } from "@/data/mockJo
 import { JobApplication, AutoApplyConfig, TailoredResume } from "@/types/job";
 import { generateTailoredResume } from "@/utils/resumeTailor";
 
-// In-memory application store (shared across session requests)
-let applications: JobApplication[] = [...initialApplications];
+// Re-initialize fresh applications with official KIRAN K INDURI data
+function getFreshApplications(): JobApplication[] {
+  return initialApplications.map((app) => {
+    const matchingJob = mockJobs.find((j) => j.id === app.jobId) || mockJobs[0];
+    const freshTailored = generateTailoredResume(matchingJob, initialUserProfile);
+    return {
+      ...app,
+      resumeUsed: freshTailored.fileName,
+      tailoredResume: freshTailored
+    };
+  });
+}
+
+let applications: JobApplication[] = getFreshApplications();
 let userProfile = { ...initialUserProfile };
 
 let autoApplyConfig: AutoApplyConfig = {
@@ -31,6 +43,20 @@ export async function GET(request: Request) {
   const easyApplyOnly = searchParams.get("easyApply") === "true";
   const c2cOnly = searchParams.get("c2cOnly") === "true";
   const domain = searchParams.get("domain") || "all";
+
+  // Always guarantee official KIRAN K INDURI profile
+  userProfile = { ...initialUserProfile };
+
+  // Guarantee all applications use official KIRAN K INDURI tailored resumes
+  applications = applications.map((app) => {
+    const matchingJob = mockJobs.find((j) => j.id === app.jobId) || mockJobs[0];
+    const freshTailored = generateTailoredResume(matchingJob, userProfile);
+    return {
+      ...app,
+      resumeUsed: freshTailored.fileName,
+      tailoredResume: freshTailored
+    };
+  });
 
   let filtered = mockJobs.filter(job => {
     if (c2cOnly && !(job.contractType === "C2C" || job.c2cEligible)) {
@@ -67,6 +93,12 @@ export async function GET(request: Request) {
     applications,
     userProfile,
     autoApplyConfig
+  }, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0"
+    }
   });
 }
 
@@ -109,7 +141,6 @@ export async function POST(request: Request) {
         screeningAnswers: screeningAnswers || {}
       };
 
-      // Put at start of applications list
       applications.unshift(newApp);
 
       return NextResponse.json({
@@ -127,6 +158,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, tailoredResume: tailored });
     }
 
+    if (action === "reset-profile") {
+      userProfile = { ...initialUserProfile };
+      applications = getFreshApplications();
+      return NextResponse.json({ success: true, profile: userProfile, applications });
+    }
+
     if (action === "update-profile") {
       const { profile } = body;
       userProfile = { ...userProfile, ...profile };
@@ -140,7 +177,6 @@ export async function POST(request: Request) {
     }
 
     if (action === "run-auto-apply-batch") {
-      // Find matching jobs that user hasn't applied to yet
       const appliedJobIds = new Set(applications.map(a => a.jobId));
       const candidates = mockJobs.filter(job => {
         if (appliedJobIds.has(job.id)) return false;
@@ -172,7 +208,7 @@ export async function POST(request: Request) {
           method: "Auto-Apply Agent",
           resumeUsed: tailored.fileName,
           tailoredResume: tailored,
-          notes: `Auto-Applied on C2C basis with custom tailored resume (${tailored.fileName}). Highlighted skills: ${tailored.primarySkills.slice(0, 4).join(", ")}. Corp LLC entity: ${userProfile.c2cEntityName || "Apex Consulting LLC"}.`
+          notes: `Auto-Applied on C2C basis with custom tailored resume (${tailored.fileName}). Highlighted skills: ${tailored.primarySkills.slice(0, 4).join(", ")}. Corp LLC entity: ${userProfile.c2cEntityName || "Apex Enterprise Consulting LLC"}.`
         };
         applications.unshift(newApp);
         appliedNow.push(newApp);

@@ -14,6 +14,7 @@ import { ResumeViewerModal } from "@/components/ResumeViewerModal";
 import { RecruiterMessageModal } from "@/components/RecruiterMessageModal";
 import { Job, JobApplication, UserProfile, AutoApplyConfig, TailoredResume } from "@/types/job";
 import { mockJobs, initialApplications, initialUserProfile } from "@/data/mockJobs";
+import { generateTailoredResume } from "@/utils/resumeTailor";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"jobs" | "tracker" | "auto-apply" | "profile" | "analytics">("jobs");
@@ -70,7 +71,13 @@ export default function Home() {
       if (c2cOnly) params.set("c2cOnly", "true");
       if (domainFilter !== "all") params.set("domain", domainFilter);
 
-      const res = await fetch(`/api/jobs?${params.toString()}`);
+      const res = await fetch(`/api/jobs?${params.toString()}&_t=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache"
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         setJobs(data.jobs || []);
@@ -78,8 +85,22 @@ export default function Home() {
           const stillThere = data.jobs.find((j: Job) => j.id === selectedJob?.id);
           if (!stillThere) setSelectedJob(data.jobs[0]);
         }
-        if (data.applications) setApplications(data.applications);
-        if (data.userProfile) setUserProfile(data.userProfile);
+        if (data.applications) {
+          // Normalize applications to ensure KIRAN K INDURI is always used
+          const normalizedApps = data.applications.map((app: JobApplication) => {
+            const matchingJob = (data.jobs || mockJobs).find((j: Job) => j.id === app.jobId) || mockJobs[0];
+            const freshTailored = generateTailoredResume(matchingJob, initialUserProfile);
+            return {
+              ...app,
+              resumeUsed: freshTailored.fileName,
+              tailoredResume: freshTailored
+            };
+          });
+          setApplications(normalizedApps);
+        }
+        if (data.userProfile) {
+          setUserProfile({ ...initialUserProfile, ...data.userProfile, fullName: "KIRAN K INDURI", phone: "+1 (770) 695-7976", email: "narik.kiran95@gmail.com" });
+        }
         if (data.autoApplyConfig) setAutoApplyConfig(data.autoApplyConfig);
       }
     } catch (e) {
@@ -90,6 +111,22 @@ export default function Home() {
   useEffect(() => {
     fetchJobs();
   }, [searchQuery, locationQuery, workplaceType, experienceLevel, easyApplyOnly, c2cOnly, domainFilter]);
+
+  // Force clean profile & application state on first mount
+  useEffect(() => {
+    setUserProfile(initialUserProfile);
+    setApplications(
+      initialApplications.map((app) => {
+        const matchingJob = mockJobs.find((j) => j.id === app.jobId) || mockJobs[0];
+        const fresh = generateTailoredResume(matchingJob, initialUserProfile);
+        return {
+          ...app,
+          resumeUsed: fresh.fileName,
+          tailoredResume: fresh
+        };
+      })
+    );
+  }, []);
 
   const appliedJobIds = new Set(applications.map((a) => a.jobId));
 
@@ -169,18 +206,47 @@ export default function Home() {
   };
 
   const handleSaveProfile = async (updated: UserProfile) => {
-    setUserProfile(updated);
+    const forced = { ...updated, fullName: "KIRAN K INDURI", phone: "+1 (770) 695-7976", email: "narik.kiran95@gmail.com" };
+    setUserProfile(forced);
     try {
       await fetch("/api/jobs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "update-profile",
-          profile: updated
+          profile: forced
         })
       });
     } catch (e) {
       console.error("Error updating profile:", e);
+    }
+  };
+
+  const handleSyncOfficialProfile = async () => {
+    setUserProfile(initialUserProfile);
+    const freshApps = initialApplications.map((app) => {
+      const matchingJob = mockJobs.find((j) => j.id === app.jobId) || mockJobs[0];
+      const fresh = generateTailoredResume(matchingJob, initialUserProfile);
+      return {
+        ...app,
+        resumeUsed: fresh.fileName,
+        tailoredResume: fresh
+      };
+    });
+    setApplications(freshApps);
+    try {
+      const res = await fetch("/api/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reset-profile" })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.profile) setUserProfile(data.profile);
+        if (data.applications) setApplications(data.applications);
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -296,6 +362,7 @@ export default function Home() {
             onWithdraw={handleWithdrawApplication}
             onInspectResume={(app) => setInspectResumeApp(app)}
             onMessageRecruiter={(j) => setMessageJob(j)}
+            onSyncOfficialResume={handleSyncOfficialProfile}
           />
         )}
 
